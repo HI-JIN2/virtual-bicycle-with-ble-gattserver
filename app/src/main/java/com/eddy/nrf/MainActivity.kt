@@ -48,6 +48,12 @@ class MainActivity : AppCompatActivity() {
 
         bleInitialize()
 
+        binding.btnAnim.setOnClickListener {
+
+            val intent = Intent(this, AnimActivity::class.java)
+            startActivity(intent)
+        }
+
         // BluetoothManager에서 BluetoothAdapter 가져오기
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
