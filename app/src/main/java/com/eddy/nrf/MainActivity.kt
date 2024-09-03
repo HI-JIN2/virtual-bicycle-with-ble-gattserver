@@ -21,6 +21,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -29,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.eddy.nrf.Utils.checkAllPermission
 import com.eddy.nrf.databinding.ActivityMainBinding
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,6 +60,8 @@ class MainActivity : AppCompatActivity() {
             bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
             binding.tvStatus.text = "광고 중지"
         }
+
+        binding.btnStopSend.setOnClickListener { stopSendingResponses() }
         setupGattServer()
     }
 
@@ -146,7 +151,10 @@ class MainActivity : AppCompatActivity() {
 
             advertiser.startAdvertising(settings, data, advertiseCallback)
         }
-    }
+    }// 멤버 변수로 Handler와 Runnable 정의
+
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var runnable: Runnable
 
     private val gattServerCallback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
@@ -173,6 +181,23 @@ class MainActivity : AppCompatActivity() {
             Log.d("GattServer", message)
         }
 
+        override fun onNotificationSent(device: BluetoothDevice?, status: Int) {
+            //Todo 얜 아예 안찍힘
+            super.onNotificationSent(device, status)
+            Log.d("GattServer", "onNotificationSent")
+
+            val responseValue = ByteArray(10)
+            responseValue[0] = Random.nextInt(0, 10).toByte() // 예시 값 0x2A
+
+            gattServer?.sendResponse(
+                device,
+                1,
+                BluetoothGatt.GATT_SUCCESS,
+                1,
+                responseValue
+            )
+        }
+
         override fun onCharacteristicReadRequest(
             device: BluetoothDevice,
             requestId: Int,
@@ -181,11 +206,11 @@ class MainActivity : AppCompatActivity() {
         ) {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic)
 
-            // 읽기 요청에 대한 데이터 설정
-            val responseValue = ByteArray(1)
-            responseValue[0] = 42 // 예시 값 0x2A
+            val responseValue = ByteArray(10)
+            responseValue[0] = Random.nextInt(0, 10).toByte() // 예시 값 0x2A
 
-            // 클라이언트에게 응답
+            Log.d("GattServer", responseValue[0].toString())
+            // 클라이언트에게 전송
             gattServer?.sendResponse(
                 device,
                 requestId,
@@ -193,7 +218,14 @@ class MainActivity : AppCompatActivity() {
                 offset,
                 responseValue
             )
+
         }
+    }
+
+
+    // 필요 시 전송을 중지하는 메서드
+    fun stopSendingResponses() {
+        handler.removeCallbacks(runnable)
     }
 
 

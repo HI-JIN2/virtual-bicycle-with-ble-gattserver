@@ -13,8 +13,18 @@ object Utils {
     val HEART_RATE_P_UUID: ParcelUuid? =
         ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")
 
+    val NOTIFICATION_CHARACTERISTIC_UUID: UUID =
+        UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb")
+
 
     fun Activity.checkAllPermission(vararg permission: String): Boolean {
         return permission.all { checkSelfPermission(it) == PERMISSION_GRANTED }
+    }
+
+    fun generateRandomString(length: Int): Byte {
+        val allowedChars = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("").toByte()
     }
 }
