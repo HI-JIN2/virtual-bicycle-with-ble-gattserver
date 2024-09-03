@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 //                        Charset.forName("UTF-8")
 //                    )
 //                )
-                .addServiceUuid(ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB"))  // 예시 UUID
+                .addServiceUuid(HEART_RATE_UUID) // 예시 UUID
                 .build()
 
 
@@ -211,5 +211,18 @@ class MainActivity : AppCompatActivity() {
             return
         }
         bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
+    }
+
+    companion object {
+        val ADVERTISE_SUCCESS = 0
+        val ADVERTISE_FAILED_DATA_TOO_LARGE = 1
+        val ADVERTISE_FAILED_TOO_MANY_ADVERTISERS = 2
+        val ADVERTISE_FAILED_ALREADY_STARTED = 3
+        val ADVERTISE_FAILED_INTERNAL_ERROR = 4
+        val ADVERTISE_FAILED_FEATURE_UNSUPPORTED = 5
+
+        private val HEART_RATE_UUID = ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")
+        private val HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID =
+            ParcelUuid.fromString("00002A37-0000-1000-8000-00805f9b34fb")!!
     }
 }
