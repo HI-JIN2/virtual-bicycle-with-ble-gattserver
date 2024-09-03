@@ -25,7 +25,13 @@
 3. app이 설치된 기기(`server`)에서 연결당한 `client` 기기에게 정보를 전송한다.
     - `BluetoothGattServerCallback` 안에 있는 `onConnectionStateChange`를 통해 연결 감지, 연결된 `client` 기기 정보(Address)를 불러온다.
     - `onCharacteristicReadRequest`를 통해 연결된 `client` 기기에게 정보를 전송한다.
-  
+## trouble shooting
+```
+error 133 (0x85) gatt error
+```
+- 크기가 큼
+
+
 ## 깨알 상식
 - 블루투스는 1:1 연결이다.
 - 가상 기기는 블루투스가 없다. 
