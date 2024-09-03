@@ -6,7 +6,9 @@ import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.BLUETOOTH_SCAN
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattServer
 import android.bluetooth.BluetoothGattServerCallback
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
@@ -36,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
     private lateinit var enableBluetoothLauncher: ActivityResultLauncher<Intent>
 
+    private lateinit var gattServer: BluetoothGattServer
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnStart.setOnClickListener { handleStartButtonClick() }
 
+        binding.btnStop.setOnClickListener {
+            bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
+            binding.tvStatus.text = "광고 중지"
+        }
         setupGattServer()
     }
 
@@ -66,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupGattServer() {
-        val gattServer = (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+        gattServer = (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .openGattServer(this, gattServerCallback)
         val service = BluetoothGattService(
             Utils.HEART_RATE_UUID,
@@ -144,16 +152,51 @@ class MainActivity : AppCompatActivity() {
     private val gattServerCallback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
-            val message = when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> "Device connected: ${device.address}"
-                BluetoothProfile.STATE_DISCONNECTED -> "Device disconnected: ${device.address}"
-                else -> "Unknown state"
+
+            var message = ""
+            when (newState) {
+                BluetoothProfile.STATE_CONNECTED -> {
+                    message = "Device connected: ${device.address}"
+                    binding.tvStatus.text = "STATE_CONNECTED"
+                }
+
+                BluetoothProfile.STATE_DISCONNECTED -> {
+                    message = "Device disconnected: ${device.address}"
+                    binding.tvDeviceInfo.text = message
+                    binding.tvStatus.text = "STATE_DISCONNECTED " + newState.toString()
+                }
+
+                else -> {
+                    message = "Unknown state"
+                    binding.tvStatus.text = newState.toString()
+                }
             }
             Log.d("GattServer", message)
-            binding.tvDeviceInfo.text =
-                if (newState == BluetoothProfile.STATE_CONNECTED) device.address else "연결 실패"
+        }
+
+        override fun onCharacteristicReadRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            offset: Int,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            super.onCharacteristicReadRequest(device, requestId, offset, characteristic)
+
+            // 읽기 요청에 대한 데이터 설정
+            val responseValue = ByteArray(1)
+            responseValue[0] = 42 // 예시 값 0x2A
+
+            // 클라이언트에게 응답
+            gattServer?.sendResponse(
+                device,
+                requestId,
+                BluetoothGatt.GATT_SUCCESS,
+                offset,
+                responseValue
+            )
         }
     }
+
 
     private val advertiseCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
