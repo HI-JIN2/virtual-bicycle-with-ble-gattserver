@@ -48,9 +48,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //블루투스를 위한 권한을 따옵니다.
         bleInitialize()
 
-        // BluetoothManager에서 BluetoothAdapter 가져오기
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
 
@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 }
 //                bluetoothAdapter.enable() -> deprecated
 // 사용자에게 Bluetooth 활성화 요청 다이얼로그가 표시됨.
+
                 // 블루투스 활성화 요청
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 enableBluetoothLauncher.launch(enableBtIntent)
@@ -132,7 +133,8 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                checkSelfPermission(BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestBlePermissions()
                 return
@@ -149,10 +151,10 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requestPermissions(
                 arrayOf(
+                    ACCESS_FINE_LOCATION,
                     BLUETOOTH_SCAN,
                     BLUETOOTH_CONNECT,
                     BLUETOOTH_ADVERTISE,
-                    ACCESS_FINE_LOCATION
                 ), PERMISSION_REQUEST_CODE_S
             )
         } else {
@@ -177,15 +179,8 @@ class MainActivity : AppCompatActivity() {
             // 광고 데이터 설정 (기기 식별을 위한 UUID 등)
             val data = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)  // 기기 이름 포함
-//                .addServiceData(
-//                    ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB"),
-//                    "yujin".toByteArray(
-//                        Charset.forName("UTF-8")
-//                    )
-//                )
                 .addServiceUuid(Utils.HEART_RATE_P_UUID) // 예시 UUID
                 .build()
-
 
             Log.d("BluetoothAdvertise", data.toString())
             Log.d("BluetoothAdvertise", data.includeDeviceName.toString())
