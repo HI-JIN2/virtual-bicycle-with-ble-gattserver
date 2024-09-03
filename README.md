@@ -5,11 +5,12 @@
 - 스마트폰을 Bluetooth Server로 만들어 센서의 역할을 하게 한다.
 
 ## using
-
-- BluetoothAdapter
-- BluetoothLeAdvertiser
-- BluetoothGattServer
+- [BluetoothLeAdvertiser](https://developer.android.com/reference/android/bluetooth/le/BluetoothLeAdvertiser)
+    - [AdvertiseCallback](https://developer.android.com/reference/android/bluetooth/le/AdvertiseCallback)    
+- [BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer)
+    - [BluetoothGattServerCallback](https://developer.android.com/reference/android/bluetooth/BluetoothGattServerCallback)
 - Animation
+
 
 ## 기기
 
@@ -22,6 +23,9 @@
 1. 블루투스 기기 광고를 한다.
 2. 블루투스 연결을 당한다.
 3. app이 설치된 기기(`server`)에서 연결당한 `client` 기기에게 정보를 전송한다.
-    - BluetoothGattServerCallback 안에 있는 onConnectionStateChange를 통해 연결 감지, 연결된 `client` 기기 정보(
-      Address)를 불러온다.
-    - onCharacteristicReadRequest를 통해 연결된 `client` 기기에게 정보를 전송한다. 
+    - `BluetoothGattServerCallback` 안에 있는 `onConnectionStateChange`를 통해 연결 감지, 연결된 `client` 기기 정보(Address)를 불러온다.
+    - `onCharacteristicReadRequest`를 통해 연결된 `client` 기기에게 정보를 전송한다.
+  
+## 깨알 상식
+- 블루투스는 1:1 연결이다.
+- 가상 기기는 블루투스가 없다. 
