@@ -17,22 +17,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_info"
+        android:id="@+id/tv_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="연결 대기 중"
+        android:text="광고 시작 전"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_start" />
 
-
-    <Button
-        android:id="@+id/btn_anim"
+    <TextView
+        android:id="@+id/tv_device_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="애니메이션으로 이동"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="30dp"
+        android:text="연결된 기기 정보가 없습니다."
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_status" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

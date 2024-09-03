@@ -6,7 +6,13 @@ import android.Manifest.permission.BLUETOOTH_ADVERTISE
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.BLUETOOTH_SCAN
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattServer
+import android.bluetooth.BluetoothGattServerCallback
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
@@ -16,7 +22,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.ParcelUuid
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -35,9 +40,6 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
 
     private lateinit var enableBluetoothLauncher: ActivityResultLauncher<Intent>
-
-    private var PERMISSION_REQUEST_CODE_S = 101
-    private var PERMISSION_REQUEST_CODE = 100
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +61,6 @@ class MainActivity : AppCompatActivity() {
         bluetoothAdapter = bluetoothManager.adapter
 
         Log.d("name", bluetoothAdapter.name.toString())
-
 
         binding.btnStart.setOnClickListener {
             if (bluetoothAdapter.isEnabled) {
@@ -89,6 +90,47 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val gattServer: BluetoothGattServer? =
+            bluetoothManager.openGattServer(this, gattServerCallback)
+
+        // 4. GATT 서비스를 추가합니다 (서비스 및 특성 정의).
+        val service = BluetoothGattService(
+            Utils.HEART_RATE_UUID,
+            BluetoothGattService.SERVICE_TYPE_PRIMARY
+        )
+
+        // 서비스에 특성을 추가합니다.
+        val characteristic = BluetoothGattCharacteristic(
+            Utils.HEART_RATE_MEASUREMENT,
+            BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+            BluetoothGattCharacteristic.PERMISSION_READ
+        )
+        service.addCharacteristic(characteristic)
+
+        // 서버에 서비스를 추가합니다.
+        gattServer?.addService(service)
+
+
+
+
+    }
+
+    //연결에 대한 콜백
+    private val gattServerCallback = object : BluetoothGattServerCallback() {
+        override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
+            super.onConnectionStateChange(device, status, newState)
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                // 클라이언트가 서버에 연결되었을 때
+                Log.d("GattServer", "Device connected: ${device.address}")
+                binding.tvDeviceInfo.text = device.address
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                // 클라이언트가 서버에서 연결이 끊어졌을 때
+                Log.d("GattServer", "Device disconnected: ${device.address}")
+                binding.tvDeviceInfo.text = "연결 실패"
+            }//address는 그냥 받아지는데 name은 왜 퍼미션 체크를 또해야지????
+        }
+
+        // 여기에서 onServiceAdded, onCharacteristicReadRequest 등 다른 콜백들도 처리할 수 있습니다.
     }
 
     private fun bleInitialize() {
@@ -147,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 //                        Charset.forName("UTF-8")
 //                    )
 //                )
-                .addServiceUuid(HEART_RATE_UUID) // 예시 UUID
+                .addServiceUuid(Utils.HEART_RATE_P_UUID) // 예시 UUID
                 .build()
 
 
@@ -183,7 +225,7 @@ class MainActivity : AppCompatActivity() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             Log.d("BluetoothAdvertise", "Advertising started successfully")
 
-            binding.tvInfo.text = "광고 중"
+            binding.tvStatus.text = "광고 중"
 
         }
 
@@ -220,9 +262,7 @@ class MainActivity : AppCompatActivity() {
         val ADVERTISE_FAILED_ALREADY_STARTED = 3
         val ADVERTISE_FAILED_INTERNAL_ERROR = 4
         val ADVERTISE_FAILED_FEATURE_UNSUPPORTED = 5
-
-        private val HEART_RATE_UUID = ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")
-        private val HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID =
-            ParcelUuid.fromString("00002A37-0000-1000-8000-00805f9b34fb")!!
+        private var PERMISSION_REQUEST_CODE_S = 101
+        private var PERMISSION_REQUEST_CODE = 100
     }
 }
