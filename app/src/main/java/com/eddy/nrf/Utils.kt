@@ -1,5 +1,7 @@
 package com.eddy.nrf
 
+import android.app.Activity
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.ParcelUuid
 import java.util.UUID
 
@@ -11,4 +13,8 @@ object Utils {
     val HEART_RATE_P_UUID: ParcelUuid? =
         ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")
 
+
+    fun Activity.checkAllPermission(vararg permission: String): Boolean {
+        return permission.all { checkSelfPermission(it) == PERMISSION_GRANTED }
+    }
 }
