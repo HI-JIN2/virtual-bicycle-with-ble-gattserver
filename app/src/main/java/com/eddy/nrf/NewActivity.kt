@@ -152,8 +152,9 @@ class NewActivity : Activity() {
             Log.d(TAG, Arrays.toString(value))
 
 
-            //Todo ui에 띄우기
-//            updateLocalUi(Arrays.toString(value))
+            runOnUiThread {
+                binding.textTime.text = Arrays.toString(value)
+            }
 
 //            var result = 0
 ////            for(i in 0 until value!!.size){
@@ -388,8 +389,6 @@ class NewActivity : Activity() {
         bluetoothGattServer?.addService(Utils.createHeartRateService())
             ?: Log.w(TAG, "Unable to create GATT server")
 
-        // Initialize the local UI
-//        updateLocalUi(System.currentTimeMillis().toString())
     }
 
 
@@ -399,10 +398,4 @@ class NewActivity : Activity() {
         bluetoothGattServer?.close()
     }
 
-//    private fun updateLocalUi(timestamp: String) {
-//        val date = Date(timestamp)
-//        val displayDate = DateFormat.getMediumDateFormat(this).format(date)
-//        val displayTime = DateFormat.getTimeFormat(this).format(date)
-//        binding.textTime.text = "$displayDate\n$displayTime"
-//    }
 }
