@@ -67,10 +67,10 @@ class NewActivity : Activity() {
     private val timeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val adjustReason = when (intent.action) {
-                Intent.ACTION_TIME_CHANGED -> TimeProfile.ADJUST_MANUAL
-                Intent.ACTION_TIMEZONE_CHANGED -> TimeProfile.ADJUST_TIMEZONE
-                Intent.ACTION_TIME_TICK -> TimeProfile.ADJUST_NONE
-                else -> TimeProfile.ADJUST_NONE
+                Intent.ACTION_TIME_CHANGED -> Utils.ADJUST_MANUAL
+                Intent.ACTION_TIMEZONE_CHANGED -> Utils.ADJUST_TIMEZONE
+                Intent.ACTION_TIME_TICK -> Utils.ADJUST_NONE
+                else -> Utils.ADJUST_NONE
             }
             val now = System.currentTimeMillis()
             notifyRegisteredDevices(now, adjustReason)
@@ -135,25 +135,25 @@ class NewActivity : Activity() {
         ) {
             val now = System.currentTimeMillis()
             when {
-                TimeProfile.CURRENT_TIME == characteristic.uuid -> {
+                Utils.CURRENT_TIME == characteristic.uuid -> {
                     Log.i(TAG, "Read CurrentTime")
                     bluetoothGattServer?.sendResponse(
                         device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
-                        TimeProfile.getExactTime(now, TimeProfile.ADJUST_NONE)
+                        Utils.getExactTime(now, Utils.ADJUST_NONE)
                     )
                 }
 
-                TimeProfile.LOCAL_TIME_INFO == characteristic.uuid -> {
+                Utils.LOCAL_TIME_INFO == characteristic.uuid -> {
                     Log.i(TAG, "Read LocalTimeInfo")
                     bluetoothGattServer?.sendResponse(
                         device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
-                        TimeProfile.getLocalTimeInfo(now)
+                        Utils.getLocalTimeInfo(now)
                     )
                 }
 
@@ -175,7 +175,7 @@ class NewActivity : Activity() {
             device: BluetoothDevice, requestId: Int, offset: Int,
             descriptor: BluetoothGattDescriptor
         ) {
-            if (TimeProfile.CLIENT_CONFIG == descriptor.uuid) {
+            if (Utils.CLIENT_CONFIG == descriptor.uuid) {
                 Log.d(TAG, "Config descriptor read")
                 val returnValue = if (registeredDevices.contains(device)) {
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
@@ -206,7 +206,7 @@ class NewActivity : Activity() {
             preparedWrite: Boolean, responseNeeded: Boolean,
             offset: Int, value: ByteArray
         ) {
-            if (TimeProfile.CLIENT_CONFIG == descriptor.uuid) {
+            if (Utils.CLIENT_CONFIG == descriptor.uuid) {
                 if (Arrays.equals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE, value)) {
                     Log.d(TAG, "Subscribe device to notifications: $device")
                     registeredDevices.add(device)
@@ -337,7 +337,7 @@ class NewActivity : Activity() {
             val data = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .setIncludeTxPowerLevel(false)
-                .addServiceUuid(ParcelUuid(TimeProfile.TIME_SERVICE))
+                .addServiceUuid(ParcelUuid(Utils.TIME_SERVICE))
                 .build()
 
             it.startAdvertising(settings, data, advertiseCallback)
@@ -362,7 +362,7 @@ class NewActivity : Activity() {
     private fun startServer() {
         bluetoothGattServer = bluetoothManager.openGattServer(this, gattServerCallback)
 
-        bluetoothGattServer?.addService(TimeProfile.createTimeService())
+        bluetoothGattServer?.addService(Utils.createTimeService())
             ?: Log.w(TAG, "Unable to create GATT server")
 
         // Initialize the local UI
@@ -385,13 +385,13 @@ class NewActivity : Activity() {
             Log.i(TAG, "No subscribers registered")
             return
         }
-        val exactTime = TimeProfile.getExactTime(timestamp, adjustReason)
+        val exactTime = Utils.getExactTime(timestamp, adjustReason)
 
         Log.i(TAG, "Sending update to ${registeredDevices.size} subscribers")
         for (device in registeredDevices) {
             val timeCharacteristic = bluetoothGattServer
-                ?.getService(TimeProfile.TIME_SERVICE)
-                ?.getCharacteristic(TimeProfile.CURRENT_TIME)
+                ?.getService(Utils.TIME_SERVICE)
+                ?.getCharacteristic(Utils.CURRENT_TIME)
             timeCharacteristic?.value = exactTime
             bluetoothGattServer?.notifyCharacteristicChanged(device, timeCharacteristic, false)
         }
