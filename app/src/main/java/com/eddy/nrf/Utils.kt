@@ -29,8 +29,8 @@ object Utils {
         val heartRateMeasurement = BluetoothGattCharacteristic(
             HEART_RATE_MEASUREMENT,
             //Read-only characteristic, supports notifications
-            BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-            BluetoothGattCharacteristic.PERMISSION_READ
+            BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_WRITE,
+            BluetoothGattCharacteristic.PERMISSION_READ or BluetoothGattCharacteristic.PROPERTY_WRITE
         )
         val configDescriptor = BluetoothGattDescriptor(
             CLIENT_CONFIG,
