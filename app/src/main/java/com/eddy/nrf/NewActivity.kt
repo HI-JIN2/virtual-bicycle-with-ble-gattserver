@@ -150,10 +150,10 @@ class NewActivity : Activity() {
                 value
             )
 
-            val result = value.toString().replace("[", "").replace("]", "").toInt()
-
+            val result = value.contentToString().replace("[", "").replace("]", "").toInt()
             val hexResult = Integer.toHexString(result)
-            Log.d(TAG, "onCharacteristicWriteRequest 10진수: $result -> 16진수:0x$hexResult ")
+
+            Log.d(TAG, "onCharacteristicWriteRequest 16진수:0x$hexResult -> 10진수: $result ")
         }
 
         //Descriptorr CCCD를 써야 노티를 보낼 수 있음
