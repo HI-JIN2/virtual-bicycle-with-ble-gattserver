@@ -1,21 +1,5 @@
 package com.eddy.nrf
 
-/*
- * Copyright 2018, The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -60,13 +44,10 @@ class NewActivity : Activity() {
     /* Collection of notification subscribers */
     private val registeredDevices = mutableSetOf<BluetoothDevice>()
 
-    /**
-     * Listens for system time changes and triggers a notification to
-     * Bluetooth subscribers.
-     */
 
     private val heartRateNotificationHandler = android.os.Handler()
 
+    // 60~100 사이로 랜덤한 심박수를 생성
     private val heartRateRunnable = object : Runnable {
         override fun run() {
             val randomHeartRate = (60..100).random()
@@ -75,24 +56,7 @@ class NewActivity : Activity() {
         }
     }
 
-//    private val timeReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context, intent: Intent) {
-//            val adjustReason = when (intent.action) {
-//                Intent.ACTION_TIME_CHANGED -> Utils.ADJUST_MANUAL
-//                Intent.ACTION_TIMEZONE_CHANGED -> Utils.ADJUST_TIMEZONE
-//                Intent.ACTION_TIME_TICK -> Utils.ADJUST_NONE
-//                else -> Utils.ADJUST_NONE
-//            }
-//            val now = System.currentTimeMillis()
-//            notifyRegisteredDevices(now, adjustReason)
-//            updateLocalUi(now)
-//        }
-//    }
-
-    /**
-     * Listens for Bluetooth adapter events to enable/disable
-     * advertising and server functionality.
-     */
+    //리시버를 통해 notification 함
     private val bluetoothReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF)
@@ -115,9 +79,7 @@ class NewActivity : Activity() {
         }
     }
 
-    /**
-     * Callback to receive information about the advertisement process.
-     */
+    //광고에 대한 콜백
     private val advertiseCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
             Log.i(TAG, "LE Advertise Started.")
@@ -128,10 +90,8 @@ class NewActivity : Activity() {
         }
     }
 
-    /**
-     * Callback to handle incoming requests to the GATT server.
-     * All read/write requests for characteristics and descriptors are handled here.
-     */
+
+    //GATT에 대한 콜백
     private val gattServerCallback = object : BluetoothGattServerCallback() {
 
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
@@ -170,6 +130,7 @@ class NewActivity : Activity() {
 
         }
 
+        //Descriptorr CCCD를 써야 노티를 보낼 수 있음
         override fun onDescriptorReadRequest(
             device: BluetoothDevice, requestId: Int, offset: Int,
             descriptor: BluetoothGattDescriptor
@@ -307,16 +268,12 @@ class NewActivity : Activity() {
         if (bluetoothAdapter.isEnabled) {
             stopServer()
             stopAdvertising()
-        }
+        }//앱이 종료되면 GATT서버, 광고 다 중
 
         unregisterReceiver(bluetoothReceiver)
     }
 
-    /**
-     * Verify the level of Bluetooth support provided by the hardware.
-     * @param bluetoothAdapter System [BluetoothAdapter].
-     * @return true if Bluetooth is properly supported, false otherwise.
-     */
+
     private fun checkBluetoothSupport(bluetoothAdapter: BluetoothAdapter?): Boolean {
 
         if (bluetoothAdapter == null) {
@@ -332,10 +289,7 @@ class NewActivity : Activity() {
         return true
     }
 
-    /**
-     * Begin advertising over Bluetooth that this device is connectable
-     * and supports the Current Time Service.
-     */
+    //광고 시작
     private fun startAdvertising() {
         val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
             bluetoothManager.adapter.bluetoothLeAdvertiser
@@ -351,16 +305,15 @@ class NewActivity : Activity() {
             val data = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .setIncludeTxPowerLevel(false)
-                .addServiceUuid(ParcelUuid(Utils.TIME_SERVICE))
+                .addServiceUuid(ParcelUuid(Utils.HEART_RATE_SERVICE))
                 .build()
 
             it.startAdvertising(settings, data, advertiseCallback)
         } ?: Log.w(TAG, "Failed to create advertiser")
     }
 
-    /**
-     * Stop Bluetooth advertisements.
-     */
+
+    //광고 종료
     private fun stopAdvertising() {
         val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
             bluetoothManager.adapter.bluetoothLeAdvertiser
@@ -369,10 +322,7 @@ class NewActivity : Activity() {
         } ?: Log.w(TAG, "Failed to create advertiser")
     }
 
-    /**
-     * Initialize the GATT server instance with the services/characteristics
-     * from the Time Profile.
-     */
+    //GATT서버 인스턴스 생성. services/characteristics을 기반으로
     private fun startServer() {
         bluetoothGattServer = bluetoothManager.openGattServer(this, gattServerCallback)
 
@@ -383,9 +333,8 @@ class NewActivity : Activity() {
         updateLocalUi(System.currentTimeMillis())
     }
 
-    /**
-     * Shut down the GATT server.
-     */
+
+    //GATT서버 종료
     private fun stopServer() {
         bluetoothGattServer?.close()
     }
