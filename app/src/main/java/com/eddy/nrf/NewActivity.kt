@@ -1,6 +1,7 @@
 package com.eddy.nrf
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -104,6 +105,7 @@ class NewActivity : Activity() {
             }
         }
 
+        @SuppressLint("MissingPermission")
         override fun onCharacteristicReadRequest(
             device: BluetoothDevice, requestId: Int, offset: Int,
             characteristic: BluetoothGattCharacteristic
@@ -127,10 +129,35 @@ class NewActivity : Activity() {
                     null
                 )
             }
+        }
 
+        override fun onCharacteristicWriteRequest(
+            device: BluetoothDevice?,
+            requestId: Int,
+            characteristic: BluetoothGattCharacteristic?,
+            preparedWrite: Boolean,
+            responseNeeded: Boolean,
+            offset: Int,
+            value: ByteArray?
+        ) {
+            super.onCharacteristicWriteRequest(
+                device,
+                requestId,
+                characteristic,
+                preparedWrite,
+                responseNeeded,
+                offset,
+                value
+            )
+
+            val result = value.toString().replace("[", "").replace("]", "").toInt()
+
+            val hexResult = Integer.toHexString(result)
+            Log.d(TAG, "onCharacteristicWriteRequest 10진수: $result -> 16진수:0x$hexResult ")
         }
 
         //Descriptorr CCCD를 써야 노티를 보낼 수 있음
+        @SuppressLint("MissingPermission")
         override fun onDescriptorReadRequest(
             device: BluetoothDevice, requestId: Int, offset: Int,
             descriptor: BluetoothGattDescriptor
@@ -160,6 +187,7 @@ class NewActivity : Activity() {
             }
         }
 
+        @SuppressLint("MissingPermission")
         override fun onDescriptorWriteRequest(
             device: BluetoothDevice, requestId: Int,
             descriptor: BluetoothGattDescriptor,
@@ -201,6 +229,7 @@ class NewActivity : Activity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new)
@@ -243,6 +272,7 @@ class NewActivity : Activity() {
 //        registerReceiver(timeReceiver, filter)
     }
 
+    @SuppressLint("MissingPermission")
     private fun notifyHeartRate(heartRate: Byte) {
         if (registeredDevices.isEmpty()) return
 
@@ -290,6 +320,7 @@ class NewActivity : Activity() {
     }
 
     //광고 시작
+    @SuppressLint("MissingPermission")
     private fun startAdvertising() {
         val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
             bluetoothManager.adapter.bluetoothLeAdvertiser
@@ -314,6 +345,7 @@ class NewActivity : Activity() {
 
 
     //광고 종료
+    @SuppressLint("MissingPermission")
     private fun stopAdvertising() {
         val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
             bluetoothManager.adapter.bluetoothLeAdvertiser
@@ -323,6 +355,7 @@ class NewActivity : Activity() {
     }
 
     //GATT서버 인스턴스 생성. services/characteristics을 기반으로
+    @SuppressLint("MissingPermission")
     private fun startServer() {
         bluetoothGattServer = bluetoothManager.openGattServer(this, gattServerCallback)
 
@@ -335,6 +368,7 @@ class NewActivity : Activity() {
 
 
     //GATT서버 종료
+    @SuppressLint("MissingPermission")
     private fun stopServer() {
         bluetoothGattServer?.close()
     }
