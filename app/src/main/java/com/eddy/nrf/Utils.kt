@@ -48,4 +48,8 @@ object Utils {
         return permission.all { checkSelfPermission(it) == PERMISSION_GRANTED }
     }
 
+    fun byteArrayToHexArray(byteArray: ByteArray): Array<String> {
+        return byteArray.map { String.format("%02X", it) }.toTypedArray()
+    }
+
 }

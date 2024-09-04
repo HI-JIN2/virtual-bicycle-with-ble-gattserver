@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.os.ParcelUuid
 import android.util.Log
 import android.view.WindowManager
+import com.eddy.nrf.Utils.byteArrayToHexArray
 import com.eddy.nrf.databinding.ActivityNewBinding
 import java.util.Arrays
 
@@ -49,10 +50,12 @@ class NewActivity : Activity() {
     private val heartRateRunnable = object : Runnable {
         override fun run() {
 //            val randomHeartRate = (60..100).random()
-            val randomHeartRate = 1231231231231231231 //19자리
 
-            notifyHeartRate(randomHeartRate.toByte())
-            heartRateNotificationHandler.postDelayed(this, 1000)
+            for (i in 1..255) {
+                notifyHeartRate(i.toByte())
+                heartRateNotificationHandler.postDelayed(this, 1000)
+            }
+
         }
     }
 
@@ -149,33 +152,14 @@ class NewActivity : Activity() {
                 offset,
                 value
             )
+
             Log.d(TAG, Arrays.toString(value))
 
-            if (value != null) {
-                val resultArray = value.map { String.format("%02X", it) }.toTypedArray()
+            val resultArray = value?.let { byteArrayToHexArray(it) }
 
-                runOnUiThread {
-                    binding.textTime.text = resultArray.joinToString(" ")
-                }
+            runOnUiThread {
+                binding.textTime.text = resultArray?.joinToString("")
             }
-
-
-
-
-//            var result = 0
-////            for(i in 0 until value!!.size){
-////             result += value[i].toInt()
-////            }
-//
-//            result = Arrays.toString(value).replace("[", "").replace("]", "").toInt()
-
-//            val hexResult = Integer.toHexString(result)
-
-//            Log.d(TAG, "onCharacteristicWriteRequest 16진수:0x$hexResult -> 10진수: $result ")
-//            Log.d(TAG, "onCharacteristicWriteRequest -> 10진수: $result ")
-
-
-            //Todo pasrsing 필요
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
