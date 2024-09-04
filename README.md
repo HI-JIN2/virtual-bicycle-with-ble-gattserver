@@ -31,6 +31,11 @@ error 133 (0x85) gatt error
 ```
 - 크기가 큼
 
+```
+error 3 (0x3) gatt write not permit
+```
+- 상수 잘 보기, XXX_WRITE와 XXX_WRITE
+
 
 ## 깨알 상식
 - 블루투스는 1:1 연결이다.
