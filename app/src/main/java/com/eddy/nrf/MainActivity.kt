@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattServer
 import android.bluetooth.BluetoothGattServerCallback
 import android.bluetooth.BluetoothGattService
@@ -31,7 +32,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.eddy.nrf.Utils.checkAllPermission
 import com.eddy.nrf.databinding.ActivityMainBinding
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var enableBluetoothLauncher: ActivityResultLauncher<Intent>
 
     private lateinit var gattServer: BluetoothGattServer
+    private lateinit var service: BluetoothGattService
+    private lateinit var characteristic: BluetoothGattCharacteristic
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,17 +82,126 @@ class MainActivity : AppCompatActivity() {
     private fun setupGattServer() {
         gattServer = (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .openGattServer(this, gattServerCallback)
-        val service = BluetoothGattService(
+        service = BluetoothGattService(
             Utils.HEART_RATE_UUID,
             BluetoothGattService.SERVICE_TYPE_PRIMARY
         )
-        val characteristic = BluetoothGattCharacteristic(
+        characteristic = BluetoothGattCharacteristic(
             Utils.HEART_RATE_MEASUREMENT,
             BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
             BluetoothGattCharacteristic.PERMISSION_READ
         )
+        val cccd = BluetoothGattDescriptor(
+            Utils.CCCD_UUID,
+            BluetoothGattDescriptor.PERMISSION_READ or BluetoothGattDescriptor.PERMISSION_WRITE
+        )
+        characteristic.addDescriptor(cccd)
+
         service.addCharacteristic(characteristic)
-        gattServer?.addService(service)
+        gattServer.addService(service)
+
+
+    }
+
+    // GATT 서버 콜백
+    private val gattServerCallback = object : BluetoothGattServerCallback() {
+        override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                // 기기 연결됨
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                // 기기 연결 해제됨
+            }
+        }
+
+        override fun onCharacteristicReadRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            offset: Int,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            if (characteristic.uuid == Utils.HEART_RATE_MEASUREMENT) {
+
+
+                gattServer?.sendResponse(
+                    device,
+                    requestId,
+                    BluetoothGatt.GATT_SUCCESS,
+                    offset,
+                    characteristic.value
+                )
+//                gattServer.notifyCharacteristicChanged(device,characteristic,false,heartRateValue)
+            }
+        }
+
+        override fun onDescriptorReadRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            offset: Int,
+            descriptor: BluetoothGattDescriptor,
+        ) {
+            if (descriptor.uuid == Utils.CCCD_UUID) {
+
+                gattServer?.sendResponse(
+                    device,
+                    requestId,
+                    BluetoothGatt.GATT_SUCCESS,
+                    offset,
+                    descriptor.value
+                )
+
+                // 심박수 값을 생성하거나 측정
+                val heartRateValue = ByteArray(1)
+                heartRateValue[0] =
+                    (60 + (Math.random() * 40)).toInt().toByte() // 60-100 BPM 범위의 임의의 심박수 값
+            }
+        }
+
+        override fun onDescriptorWriteRequest(
+            device: BluetoothDevice, requestId: Int, descriptor: BluetoothGattDescriptor,
+            preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray
+        ) {
+            if (descriptor.uuid == Utils.CCCD_UUID) {
+                // CCCD 설정을 통해 알림 활성화/비활성화 처리
+                if (responseNeeded) {
+                    gattServer?.sendResponse(
+                        device,
+                        requestId,
+                        BluetoothGatt.GATT_SUCCESS,
+                        offset,
+                        value
+                    )
+                }
+            }
+        }
+    }
+
+//    // 심박수 알림 전송
+//    private fun startHeartRateNotification() {
+//        handler.post(object : Runnable {
+//            override fun run() {
+//                // 심박수 값을 생성하거나 측정
+//                val heartRateValue = ByteArray(1)
+//                heartRateValue[0] = (60 + (Math.random() * 40)).toInt().toByte() // 60-100 BPM 범위의 임의의 심박수 값
+//
+//                // 특성 값 설정
+//                characteristic?.value = heartRateValue
+//
+//                // 알림 전송
+//                device?.let {
+//                    gattServer?.notifyCharacteristicChanged(it, heartRateCharacteristic, false)
+//                }
+//
+//                // 1초 후에 다시 실행
+//                handler.postDelayed(this, 1000)
+//            }
+//        })
+//    }
+
+    // GATT 서버 닫기
+    fun close() {
+        gattServer?.close()
+
+
     }
 
     private fun bleInitialize() {
@@ -156,6 +267,7 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 
+    /*
     private val gattServerCallback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
@@ -220,7 +332,7 @@ class MainActivity : AppCompatActivity() {
             )
 
         }
-    }
+    }*/
 
 
     // 필요 시 전송을 중지하는 메서드
