@@ -24,6 +24,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.ParcelUuid
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         gattServer = (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .openGattServer(this, gattServerCallback)
         service = BluetoothGattService(
-            Utils.HEART_RATE_UUID,
+            Utils.HEART_RATE_SERVICE,
             BluetoothGattService.SERVICE_TYPE_PRIMARY
         )
         characteristic = BluetoothGattCharacteristic(
@@ -91,11 +92,11 @@ class MainActivity : AppCompatActivity() {
             BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY,
             BluetoothGattCharacteristic.PERMISSION_READ
         )
-        val cccd = BluetoothGattDescriptor(
-            Utils.CCCD_UUID,
-            BluetoothGattDescriptor.PERMISSION_READ or BluetoothGattDescriptor.PERMISSION_WRITE
-        )
-        characteristic.addDescriptor(cccd)
+//        val cccd = BluetoothGattDescriptor(
+//            Utils.CCCD_UUID,
+//            BluetoothGattDescriptor.PERMISSION_READ or BluetoothGattDescriptor.PERMISSION_WRITE
+//        )
+//        characteristic.addDescriptor(cccd)
 
         service.addCharacteristic(characteristic)
         gattServer.addService(service)
@@ -139,39 +140,39 @@ class MainActivity : AppCompatActivity() {
             offset: Int,
             descriptor: BluetoothGattDescriptor,
         ) {
-            if (descriptor.uuid == Utils.CCCD_UUID) {
-
-                gattServer?.sendResponse(
-                    device,
-                    requestId,
-                    BluetoothGatt.GATT_SUCCESS,
-                    offset,
-                    descriptor.value
-                )
-
-                // 심박수 값을 생성하거나 측정
-                val heartRateValue = ByteArray(1)
-                heartRateValue[0] =
-                    (60 + (Math.random() * 40)).toInt().toByte() // 60-100 BPM 범위의 임의의 심박수 값
-            }
+//            if (descriptor.uuid == Utils.CCCD_UUID) {
+//
+//                gattServer?.sendResponse(
+//                    device,
+//                    requestId,
+//                    BluetoothGatt.GATT_SUCCESS,
+//                    offset,
+//                    descriptor.value
+//                )
+//
+//                // 심박수 값을 생성하거나 측정
+//                val heartRateValue = ByteArray(1)
+//                heartRateValue[0] =
+//                    (60 + (Math.random() * 40)).toInt().toByte() // 60-100 BPM 범위의 임의의 심박수 값
+//            }
         }
 
         override fun onDescriptorWriteRequest(
             device: BluetoothDevice, requestId: Int, descriptor: BluetoothGattDescriptor,
             preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray
         ) {
-            if (descriptor.uuid == Utils.CCCD_UUID) {
-                // CCCD 설정을 통해 알림 활성화/비활성화 처리
-                if (responseNeeded) {
-                    gattServer?.sendResponse(
-                        device,
-                        requestId,
-                        BluetoothGatt.GATT_SUCCESS,
-                        offset,
-                        value
-                    )
-                }
-            }
+//            if (descriptor.uuid == Utils.CCCD_UUID) {
+//                // CCCD 설정을 통해 알림 활성화/비활성화 처리
+//                if (responseNeeded) {
+//                    gattServer?.sendResponse(
+//                        device,
+//                        requestId,
+//                        BluetoothGatt.GATT_SUCCESS,
+//                        offset,
+//                        value
+//                    )
+//                }
+//            }
         }
     }
 
@@ -249,7 +250,7 @@ class MainActivity : AppCompatActivity() {
 
             val data = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
-                .addServiceUuid(Utils.HEART_RATE_P_UUID)
+                .addServiceUuid(ParcelUuid(Utils.HEART_RATE_SERVICE))
                 .build()
 
             Log.d("BluetoothAdvertise", "Advertise Data: $data")
