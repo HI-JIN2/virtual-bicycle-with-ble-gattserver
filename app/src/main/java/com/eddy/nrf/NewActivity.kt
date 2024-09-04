@@ -23,12 +23,10 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.ParcelUuid
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.WindowManager
 import com.eddy.nrf.databinding.ActivityNewBinding
 import java.util.Arrays
-import java.util.Date
 
 
 private const val TAG = "NewActivity"
@@ -155,9 +153,7 @@ class NewActivity : Activity() {
 
 
             //Todo ui에 띄우기
-
-            updateLocalUi(Arrays.toString(value))
-
+//            updateLocalUi(Arrays.toString(value))
 
 //            var result = 0
 ////            for(i in 0 until value!!.size){
@@ -393,7 +389,7 @@ class NewActivity : Activity() {
             ?: Log.w(TAG, "Unable to create GATT server")
 
         // Initialize the local UI
-        updateLocalUi(System.currentTimeMillis().toString())
+//        updateLocalUi(System.currentTimeMillis().toString())
     }
 
 
@@ -403,10 +399,10 @@ class NewActivity : Activity() {
         bluetoothGattServer?.close()
     }
 
-    private fun updateLocalUi(timestamp: String) {
-        val date = Date(timestamp)
-        val displayDate = DateFormat.getMediumDateFormat(this).format(date)
-        val displayTime = DateFormat.getTimeFormat(this).format(date)
-        binding.textTime.text = "$displayDate\n$displayTime"
-    }
+//    private fun updateLocalUi(timestamp: String) {
+//        val date = Date(timestamp)
+//        val displayDate = DateFormat.getMediumDateFormat(this).format(date)
+//        val displayTime = DateFormat.getTimeFormat(this).format(date)
+//        binding.textTime.text = "$displayDate\n$displayTime"
+//    }
 }
