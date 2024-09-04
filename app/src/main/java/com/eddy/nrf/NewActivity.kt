@@ -26,17 +26,16 @@ import android.os.ParcelUuid
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.WindowManager
-import android.widget.TextView
-
+import com.eddy.nrf.databinding.ActivityNewBinding
 import java.util.Arrays
 import java.util.Date
+
 
 private const val TAG = "NewActivity"
 
 class NewActivity : Activity() {
+    private lateinit var binding: ActivityNewBinding
 
-    /* Local UI */
-    private lateinit var localTimeView: TextView
 
     /* Bluetooth API */
     private lateinit var bluetoothManager: BluetoothManager
@@ -51,7 +50,9 @@ class NewActivity : Activity() {
     // 60~100 사이로 랜덤한 심박수를 생성
     private val heartRateRunnable = object : Runnable {
         override fun run() {
-            val randomHeartRate = (60..100).random()
+//            val randomHeartRate = (60..100).random()
+            val randomHeartRate = 1231231231231231231 //19자리
+
             notifyHeartRate(randomHeartRate.toByte())
             heartRateNotificationHandler.postDelayed(this, 1000)
         }
@@ -131,6 +132,7 @@ class NewActivity : Activity() {
             }
         }
 
+        @SuppressLint("MissingPermission")
         override fun onCharacteristicWriteRequest(
             device: BluetoothDevice?,
             requestId: Int,
@@ -149,11 +151,37 @@ class NewActivity : Activity() {
                 offset,
                 value
             )
+            Log.d(TAG, Arrays.toString(value))
 
-            val result = value.contentToString().replace("[", "").replace("]", "").toInt()
-            val hexResult = Integer.toHexString(result)
 
-            Log.d(TAG, "onCharacteristicWriteRequest 16진수:0x$hexResult -> 10진수: $result ")
+            //Todo ui에 띄우기
+
+            updateLocalUi(Arrays.toString(value))
+
+
+//            var result = 0
+////            for(i in 0 until value!!.size){
+////             result += value[i].toInt()
+////            }
+//
+//            result = Arrays.toString(value).replace("[", "").replace("]", "").toInt()
+
+//            val hexResult = Integer.toHexString(result)
+
+//            Log.d(TAG, "onCharacteristicWriteRequest 16진수:0x$hexResult -> 10진수: $result ")
+//            Log.d(TAG, "onCharacteristicWriteRequest -> 10진수: $result ")
+
+            //Todo pasrsing 필요
+
+            if (responseNeeded) {
+                bluetoothGattServer?.sendResponse(
+                    device,
+                    requestId,
+                    BluetoothGatt.GATT_SUCCESS,
+                    0,
+                    null
+                )
+            }
         }
 
         //Descriptorr CCCD를 써야 노티를 보낼 수 있음
@@ -232,9 +260,11 @@ class NewActivity : Activity() {
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new)
+        binding = ActivityNewBinding.inflate(layoutInflater)
 
-        localTimeView = findViewById(R.id.text_time)
+
+        setContentView(binding.root)
+//        binding.textTime.text = findViewById(R.id.text_time)
 
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -298,7 +328,7 @@ class NewActivity : Activity() {
         if (bluetoothAdapter.isEnabled) {
             stopServer()
             stopAdvertising()
-        }//앱이 종료되면 GATT서버, 광고 다 중
+        }//앱이 종료되면 GATT서버, 광고 다 종료
 
         unregisterReceiver(bluetoothReceiver)
     }
@@ -363,7 +393,7 @@ class NewActivity : Activity() {
             ?: Log.w(TAG, "Unable to create GATT server")
 
         // Initialize the local UI
-        updateLocalUi(System.currentTimeMillis())
+        updateLocalUi(System.currentTimeMillis().toString())
     }
 
 
@@ -373,10 +403,10 @@ class NewActivity : Activity() {
         bluetoothGattServer?.close()
     }
 
-    private fun updateLocalUi(timestamp: Long) {
+    private fun updateLocalUi(timestamp: String) {
         val date = Date(timestamp)
         val displayDate = DateFormat.getMediumDateFormat(this).format(date)
         val displayTime = DateFormat.getTimeFormat(this).format(date)
-        localTimeView.text = "$displayDate\n$displayTime"
+        binding.textTime.text = "$displayDate\n$displayTime"
     }
 }
