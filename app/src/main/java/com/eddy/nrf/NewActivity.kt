@@ -64,19 +64,30 @@ class NewActivity : Activity() {
      * Listens for system time changes and triggers a notification to
      * Bluetooth subscribers.
      */
-    private val timeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val adjustReason = when (intent.action) {
-                Intent.ACTION_TIME_CHANGED -> Utils.ADJUST_MANUAL
-                Intent.ACTION_TIMEZONE_CHANGED -> Utils.ADJUST_TIMEZONE
-                Intent.ACTION_TIME_TICK -> Utils.ADJUST_NONE
-                else -> Utils.ADJUST_NONE
-            }
-            val now = System.currentTimeMillis()
-            notifyRegisteredDevices(now, adjustReason)
-            updateLocalUi(now)
+
+    private val heartRateNotificationHandler = android.os.Handler()
+
+    private val heartRateRunnable = object : Runnable {
+        override fun run() {
+            val randomHeartRate = (60..100).random()
+            notifyHeartRate(randomHeartRate.toByte())
+            heartRateNotificationHandler.postDelayed(this, 1000)
         }
     }
+
+//    private val timeReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            val adjustReason = when (intent.action) {
+//                Intent.ACTION_TIME_CHANGED -> Utils.ADJUST_MANUAL
+//                Intent.ACTION_TIMEZONE_CHANGED -> Utils.ADJUST_TIMEZONE
+//                Intent.ACTION_TIME_TICK -> Utils.ADJUST_NONE
+//                else -> Utils.ADJUST_NONE
+//            }
+//            val now = System.currentTimeMillis()
+//            notifyRegisteredDevices(now, adjustReason)
+//            updateLocalUi(now)
+//        }
+//    }
 
     /**
      * Listens for Bluetooth adapter events to enable/disable
@@ -90,11 +101,15 @@ class NewActivity : Activity() {
                 BluetoothAdapter.STATE_ON -> {
                     startAdvertising()
                     startServer()
+                    heartRateNotificationHandler.post(heartRateRunnable)  // Start heart rate notifications
+
                 }
 
                 BluetoothAdapter.STATE_OFF -> {
                     stopServer()
                     stopAdvertising()
+                    heartRateNotificationHandler.removeCallbacks(heartRateRunnable)  // Stop heart rate notifications
+
                 }
             }
         }
@@ -133,42 +148,26 @@ class NewActivity : Activity() {
             device: BluetoothDevice, requestId: Int, offset: Int,
             characteristic: BluetoothGattCharacteristic
         ) {
-            val now = System.currentTimeMillis()
-            when {
-                Utils.CURRENT_TIME == characteristic.uuid -> {
-                    Log.i(TAG, "Read CurrentTime")
-                    bluetoothGattServer?.sendResponse(
-                        device,
-                        requestId,
-                        BluetoothGatt.GATT_SUCCESS,
-                        0,
-                        Utils.getExactTime(now, Utils.ADJUST_NONE)
-                    )
-                }
-
-                Utils.LOCAL_TIME_INFO == characteristic.uuid -> {
-                    Log.i(TAG, "Read LocalTimeInfo")
-                    bluetoothGattServer?.sendResponse(
-                        device,
-                        requestId,
-                        BluetoothGatt.GATT_SUCCESS,
-                        0,
-                        Utils.getLocalTimeInfo(now)
-                    )
-                }
-
-                else -> {
-                    // Invalid characteristic
-                    Log.w(TAG, "Invalid Characteristic Read: " + characteristic.uuid)
-                    bluetoothGattServer?.sendResponse(
-                        device,
-                        requestId,
-                        BluetoothGatt.GATT_FAILURE,
-                        0,
-                        null
-                    )
-                }
+            if (Utils.HEART_RATE_MEASUREMENT == characteristic.uuid) {
+                Log.i(TAG, "Read HeartRateMeasurement")
+                bluetoothGattServer?.sendResponse(
+                    device,
+                    requestId,
+                    BluetoothGatt.GATT_SUCCESS,
+                    0,
+                    byteArrayOf((60..100).random().toByte())
+                )
+            } else {
+                Log.w(TAG, "Invalid Characteristic Read: " + characteristic.uuid)
+                bluetoothGattServer?.sendResponse(
+                    device,
+                    requestId,
+                    BluetoothGatt.GATT_FAILURE,
+                    0,
+                    null
+                )
             }
+
         }
 
         override fun onDescriptorReadRequest(
@@ -267,6 +266,7 @@ class NewActivity : Activity() {
             Log.d(TAG, "Bluetooth enabled...starting services")
             startAdvertising()
             startServer()
+            heartRateNotificationHandler.post(heartRateRunnable)  // Start heart rate notifications
         }
     }
 
@@ -279,12 +279,26 @@ class NewActivity : Activity() {
             addAction(Intent.ACTION_TIMEZONE_CHANGED)
         }
 
-        registerReceiver(timeReceiver, filter)
+//        registerReceiver(timeReceiver, filter)
+    }
+
+    private fun notifyHeartRate(heartRate: Byte) {
+        if (registeredDevices.isEmpty()) return
+
+        Log.i(TAG, "Sending heart rate update to ${registeredDevices.size} subscribers")
+        for (device in registeredDevices) {
+            val heartRateCharacteristic = bluetoothGattServer
+                ?.getService(Utils.HEART_RATE_SERVICE)
+                ?.getCharacteristic(Utils.HEART_RATE_MEASUREMENT)
+            heartRateCharacteristic?.value = byteArrayOf(heartRate)
+
+            bluetoothGattServer?.notifyCharacteristicChanged(device, heartRateCharacteristic, false)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(timeReceiver)
+//        unregisterReceiver(timeReceiver)
     }
 
     override fun onDestroy() {
@@ -362,7 +376,7 @@ class NewActivity : Activity() {
     private fun startServer() {
         bluetoothGattServer = bluetoothManager.openGattServer(this, gattServerCallback)
 
-        bluetoothGattServer?.addService(Utils.createTimeService())
+        bluetoothGattServer?.addService(Utils.createHeartRateService())
             ?: Log.w(TAG, "Unable to create GATT server")
 
         // Initialize the local UI
@@ -376,30 +390,6 @@ class NewActivity : Activity() {
         bluetoothGattServer?.close()
     }
 
-    /**
-     * Send a time service notification to any devices that are subscribed
-     * to the characteristic.
-     */
-    private fun notifyRegisteredDevices(timestamp: Long, adjustReason: Byte) {
-        if (registeredDevices.isEmpty()) {
-            Log.i(TAG, "No subscribers registered")
-            return
-        }
-        val exactTime = Utils.getExactTime(timestamp, adjustReason)
-
-        Log.i(TAG, "Sending update to ${registeredDevices.size} subscribers")
-        for (device in registeredDevices) {
-            val timeCharacteristic = bluetoothGattServer
-                ?.getService(Utils.TIME_SERVICE)
-                ?.getCharacteristic(Utils.CURRENT_TIME)
-            timeCharacteristic?.value = exactTime
-            bluetoothGattServer?.notifyCharacteristicChanged(device, timeCharacteristic, false)
-        }
-    }
-
-    /**
-     * Update graphical UI on devices that support it with the current time.
-     */
     private fun updateLocalUi(timestamp: Long) {
         val date = Date(timestamp)
         val displayDate = DateFormat.getMediumDateFormat(this).format(date)
