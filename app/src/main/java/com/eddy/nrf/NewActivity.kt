@@ -151,10 +151,16 @@ class NewActivity : Activity() {
             )
             Log.d(TAG, Arrays.toString(value))
 
+            if (value != null) {
+                val resultArray = value.map { String.format("%02X", it) }.toTypedArray()
 
-            runOnUiThread {
-                binding.textTime.text = Arrays.toString(value)
+                runOnUiThread {
+                    binding.textTime.text = resultArray.joinToString(" ")
+                }
             }
+
+
+
 
 //            var result = 0
 ////            for(i in 0 until value!!.size){
@@ -167,6 +173,7 @@ class NewActivity : Activity() {
 
 //            Log.d(TAG, "onCharacteristicWriteRequest 16진수:0x$hexResult -> 10진수: $result ")
 //            Log.d(TAG, "onCharacteristicWriteRequest -> 10진수: $result ")
+
 
             //Todo pasrsing 필요
 
