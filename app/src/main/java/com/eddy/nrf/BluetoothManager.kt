@@ -258,6 +258,7 @@ class BluetoothServiceManager(
                 ) {
                     Log.d(TAG, "Unsubscribe device from notifications: $device")
                     registeredDevices.remove(device)
+                    heartRateNotificationHandler.removeCallbacks(heartRateRunnable)
                 }
 
                 if (responseNeeded) {
