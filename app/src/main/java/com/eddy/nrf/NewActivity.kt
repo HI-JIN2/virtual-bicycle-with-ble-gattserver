@@ -12,7 +12,9 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.eddy.nrf.databinding.ActivityNewBinding
+import kotlinx.coroutines.launch
 
 
 private const val TAG = "NewActivity"
@@ -40,8 +42,19 @@ class NewActivity : AppCompatActivity() {
         binding.tvData.text =
             "speed: ${data.speed}\n distance: ${data.distance}\ngear: ${data.gear}"
 
+        setData()
+
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun setData() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { data ->
+                binding.tvData.text =
+                    "speed: ${data.speed}\n distance: ${data.distance}\ngear: ${data.gear}"
+            }
+        }
     }
 
 
