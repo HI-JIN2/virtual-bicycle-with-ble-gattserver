@@ -260,7 +260,7 @@ class NewActivity : AppCompatActivity() {
         binding = ActivityNewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.tvData.text = "nonon"
+        binding.tvData.text = "none"
 
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -269,6 +269,10 @@ class NewActivity : AppCompatActivity() {
 
         bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
+
+
+        Log.d(TAG, "Bluetooth name: " + bluetoothAdapter.address)
+        Log.d(TAG, "Bonded devices: " + bluetoothAdapter.bondedDevices)
         // We can't continue without proper Bluetooth support
         if (!checkBluetoothSupport(bluetoothAdapter)) {
             finish()
