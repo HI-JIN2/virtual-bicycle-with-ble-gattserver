@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.eddy.nrf.databinding.ActivityNewBinding
 
@@ -21,10 +22,7 @@ class NewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewBinding
     private lateinit var bluetoothServiceManager: BluetoothServiceManager
 
-    var distance: Float = 15F //00000b67
-    var speed: Float = 20F
-    var gear = 1.toByte()
-
+    private val viewModel: MainViewModel by viewModels()
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +33,12 @@ class NewActivity : AppCompatActivity() {
 
         checkPermission()
 
-        bluetoothServiceManager = BluetoothServiceManager(this)
+        bluetoothServiceManager = BluetoothServiceManager(viewModel, this)
         bluetoothServiceManager.initializeBluetooth()
 
-        binding.tvData.text = "speed: ${speed}\n distance: ${distance}\ngear: $gear"
+        val data = viewModel.uiState.value
+        binding.tvData.text =
+            "speed: ${data.speed}\n distance: ${data.distance}\ngear: ${data.gear}"
 
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
