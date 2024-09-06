@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import java.nio.ByteBuffer
 import java.util.UUID
 
 object Utils {
@@ -50,6 +51,19 @@ object Utils {
 
     fun byteArrayToHexArray(byteArray: ByteArray): Array<String> {
         return byteArray.map { String.format("%02X", it) }.toTypedArray()
+    }
+
+    fun floatToHex4Byte(value: Float, capacity: Int): ByteArray {
+        val buffer = ByteBuffer.allocate(capacity)
+        buffer.putFloat(value)
+        return buffer.array()
+    }
+
+
+    fun floatToByteArray(value: Float): ByteArray {
+        val bytes = ByteArray(4)
+        ByteBuffer.wrap(bytes).putFloat(value)
+        return bytes.reversedArray()
     }
 
 }

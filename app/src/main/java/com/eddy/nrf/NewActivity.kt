@@ -31,7 +31,9 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.eddy.nrf.Utils.byteArrayToHexArray
+import com.eddy.nrf.Utils.floatToByteArray
 import com.eddy.nrf.databinding.ActivityNewBinding
+import java.nio.ByteBuffer
 import java.util.Arrays
 
 
@@ -51,19 +53,38 @@ class NewActivity : AppCompatActivity() {
 
     private val heartRateNotificationHandler = android.os.Handler()
 
-    var currentValue = 1
-    // 60~100 사이로 랜덤한 심박수를 생성
+    /**
+    - 거리 f4
+    - 속도 f4
+    - 파스? 기어 123  f1
+
+    다 줘야함
+
+    기어는 바꿀수도 있어야함
+     */
+
+    var distance: Float = 15F //00000b67
+    var speed: Float = 20F
+    var gear = 1.toByte()
+
+
+
     private val heartRateRunnable = object : Runnable {
         override fun run() {
 
-            if (currentValue > 255)
-                currentValue = 1
+            val buffer = ByteBuffer.allocate(9)
+            buffer.put(floatToByteArray(distance))
+            buffer.put(floatToByteArray(speed))
+            buffer.put(gear)
+            val resultArray = buffer.array()
 
-            notifyHeartRate(currentValue.toByte())
+            Log.d(TAG, "거리+속도+기어 : ${byteArrayToHexArray(resultArray).joinToString(" ")}")
+
+            notifyHeartRate(resultArray)
             heartRateNotificationHandler.postDelayed(this, 1000)
-            currentValue++
         }
     }
+
 
     //리시버를 통해 notification 함
     private val bluetoothReceiver = object : BroadcastReceiver() {
@@ -162,11 +183,10 @@ class NewActivity : AppCompatActivity() {
             Log.d(TAG, Arrays.toString(value))
 
             val resultArray = value?.let { byteArrayToHexArray(it) }
-
-
+            gear = resultArray?.get(0)?.toByte() ?: 1
 
             runOnUiThread {
-                binding.tvData.text = "client로 부터 받은 데이터는 0x" + resultArray?.joinToString("")
+                binding.tvData.text = "speed: ${speed}\n distance: ${distance}\ngear: $gear"
             }
 
             if (responseNeeded) {
@@ -260,7 +280,7 @@ class NewActivity : AppCompatActivity() {
         binding = ActivityNewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.tvData.text = "none"
+        binding.tvData.text = "speed: ${speed}\n distance: ${distance}\ngear: $gear"
 
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -305,7 +325,7 @@ class NewActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun notifyHeartRate(heartRate: Byte) {
+    private fun notifyHeartRate(heartRate: ByteArray) {
         if (registeredDevices.isEmpty()) return
 
         Log.i(TAG, "Sending heart rate update to ${registeredDevices.size} subscribers")
@@ -313,7 +333,7 @@ class NewActivity : AppCompatActivity() {
             val heartRateCharacteristic = bluetoothGattServer
                 ?.getService(Utils.HEART_RATE_SERVICE)
                 ?.getCharacteristic(Utils.HEART_RATE_MEASUREMENT)
-            heartRateCharacteristic?.value = byteArrayOf(heartRate)
+            heartRateCharacteristic?.value = heartRate
 
             bluetoothGattServer?.notifyCharacteristicChanged(device, heartRateCharacteristic, false)
         }
