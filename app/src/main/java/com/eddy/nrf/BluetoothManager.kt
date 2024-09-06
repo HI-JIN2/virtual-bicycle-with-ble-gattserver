@@ -27,9 +27,11 @@ import java.util.Arrays
 
 
 class BluetoothServiceManager(
+    private val viewModel: MainViewModel,
     private val context: Context,
 //    private val binding: ActivityNewBinding
 ) {
+
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private var bluetoothGattServer: BluetoothGattServer? = null
@@ -194,6 +196,7 @@ class BluetoothServiceManager(
 
             //Todo ui 업데이트
 //            binding.tvData.text = "speed: ${speed}\n distance: ${distance}\ngear: $gear"
+            updateUi(gear.toFloat())
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
@@ -356,6 +359,10 @@ class BluetoothServiceManager(
             notifyHeartRate(resultArray)
             heartRateNotificationHandler.postDelayed(this, 1000)
         }
+    }
+
+    fun updateUi(gear: Float) {
+        viewModel.updateUi(gear)
     }
 
     companion object {
