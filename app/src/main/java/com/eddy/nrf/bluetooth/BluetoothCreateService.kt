@@ -1,25 +1,13 @@
-package com.eddy.nrf
+package com.eddy.nrf.bluetooth
 
-
-import android.app.Activity
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
-import android.content.pm.PackageManager.PERMISSION_GRANTED
-import java.util.UUID
+import com.eddy.nrf.utils.Uuid.CLIENT_CONFIG
+import com.eddy.nrf.utils.Uuid.HEART_RATE_MEASUREMENT
+import com.eddy.nrf.utils.Uuid.HEART_RATE_SERVICE
 
-object Utils {
-
-    /*service*/
-    val HEART_RATE_SERVICE: UUID = UUID.fromString("0000180D-0000-1000-8000-00805F9B34FB")
-
-    /*Characteristic*/
-    var HEART_RATE_MEASUREMENT: UUID = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb")
-
-    /* Mandatory Client Characteristic Config Descriptor */
-    val CLIENT_CONFIG: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-
-
+object BluetoothCreateService {
     fun createHeartRateService(): BluetoothGattService {
         val service = BluetoothGattService(
             HEART_RATE_SERVICE,
@@ -43,13 +31,4 @@ object Utils {
 
         return service
     }
-
-    fun Activity.checkAllPermission(vararg permission: String): Boolean {
-        return permission.all { checkSelfPermission(it) == PERMISSION_GRANTED }
-    }
-
-    fun byteArrayToHexArray(byteArray: ByteArray): Array<String> {
-        return byteArray.map { String.format("%02X", it) }.toTypedArray()
-    }
-
 }
