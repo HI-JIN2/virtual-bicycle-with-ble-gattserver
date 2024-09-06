@@ -31,14 +31,12 @@ import java.util.Arrays
 class BluetoothServiceManager(
     private val viewModel: MainViewModel,
     private val context: Context,
-//    private val binding: ActivityNewBinding
 ) {
 
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private var bluetoothGattServer: BluetoothGattServer? = null
 
-    /* Collection of notification subscribers */
     private val registeredDevices = mutableSetOf<BluetoothDevice>()
 
     private val heartRateNotificationHandler = android.os.Handler()
@@ -48,7 +46,6 @@ class BluetoothServiceManager(
     private var speed: Float = 20F
     private var gear: Byte = 1
 
-    // Bluetooth 관련 BroadcastReceiver, GATT 서버 및 AdvertiseCallback 등을 이곳에서 관리
 
     @SuppressLint("MissingPermission")
     fun initializeBluetooth() {
@@ -65,7 +62,6 @@ class BluetoothServiceManager(
         } else {
             startAdvertising()
             startServer()
-//            startHeartRateNotifications()
             heartRateNotificationHandler.post(heartRateRunnable)
         }
     }
@@ -197,8 +193,6 @@ class BluetoothServiceManager(
             gear = resultArray?.get(0)?.toByte() ?: 1
 
 
-            //Todo ui 업데이트
-//            binding.tvData.text = "speed: ${speed}\n distance: ${distance}\ngear: $gear"
             updateUi(gear.toFloat())
 
             if (responseNeeded) {
@@ -317,11 +311,6 @@ class BluetoothServiceManager(
             Log.w(TAG, "Bluetooth is not supported")
             return false
         }
-
-//        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-//            Log.w(TAG, "Bluetooth LE is not supported")
-//            return false
-//        }
 
         return true
     }
