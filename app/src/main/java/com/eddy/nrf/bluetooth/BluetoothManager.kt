@@ -1,4 +1,4 @@
-package com.eddy.nrf
+package com.eddy.nrf.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -20,8 +20,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
-import com.eddy.nrf.Utils.byteArrayToHexArray
-import com.eddy.nrf.Utils.floatToByteArray
+import com.eddy.nrf.presentation.MainViewModel
+import com.eddy.nrf.utils.Util.byteArrayToHexArray
+import com.eddy.nrf.utils.Util.floatToByteArray
+import com.eddy.nrf.utils.Uuid
 import java.nio.ByteBuffer
 import java.util.Arrays
 
@@ -48,6 +50,7 @@ class BluetoothServiceManager(
 
     // Bluetooth 관련 BroadcastReceiver, GATT 서버 및 AdvertiseCallback 등을 이곳에서 관리
 
+    @SuppressLint("MissingPermission")
     fun initializeBluetooth() {
         val bluetoothAdapter = bluetoothManager.adapter
         if (!checkBluetoothSupport(bluetoothAdapter)) {
@@ -84,7 +87,7 @@ class BluetoothServiceManager(
             val data = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .setIncludeTxPowerLevel(false)
-                .addServiceUuid(ParcelUuid(Utils.HEART_RATE_SERVICE))
+                .addServiceUuid(ParcelUuid(Uuid.HEART_RATE_SERVICE))
                 .build()
 
             it.startAdvertising(settings, data, advertiseCallback)
@@ -106,7 +109,7 @@ class BluetoothServiceManager(
         // GATT 서버 시작 로직
         bluetoothGattServer = bluetoothManager.openGattServer(context, gattServerCallback)
 
-        bluetoothGattServer?.addService(Utils.createHeartRateService())
+        bluetoothGattServer?.addService(BluetoothCreateService.createHeartRateService())
             ?: Log.w(TAG, "Unable to create GATT server")
 
     }
@@ -147,7 +150,7 @@ class BluetoothServiceManager(
             device: BluetoothDevice, requestId: Int, offset: Int,
             characteristic: BluetoothGattCharacteristic
         ) {
-            if (Utils.HEART_RATE_MEASUREMENT == characteristic.uuid) {
+            if (Uuid.HEART_RATE_MEASUREMENT == characteristic.uuid) {
                 Log.i(TAG, "Read HeartRateMeasurement")
                 bluetoothGattServer?.sendResponse(
                     device,
@@ -215,7 +218,7 @@ class BluetoothServiceManager(
             device: BluetoothDevice, requestId: Int, offset: Int,
             descriptor: BluetoothGattDescriptor
         ) {
-            if (Utils.CLIENT_CONFIG == descriptor.uuid) {
+            if (Uuid.CLIENT_CONFIG == descriptor.uuid) {
                 Log.d(TAG, "Config descriptor read")
                 val returnValue = if (registeredDevices.contains(device)) {
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
@@ -247,7 +250,7 @@ class BluetoothServiceManager(
             preparedWrite: Boolean, responseNeeded: Boolean,
             offset: Int, value: ByteArray
         ) {
-            if (Utils.CLIENT_CONFIG == descriptor.uuid) {
+            if (Uuid.CLIENT_CONFIG == descriptor.uuid) {
                 if (Arrays.equals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE, value)) {
                     Log.d(TAG, "Subscribe device to notifications: $device")
                     registeredDevices.add(device)
@@ -290,8 +293,8 @@ class BluetoothServiceManager(
         Log.i(TAG, "Sending heart rate update to ${registeredDevices.size} subscribers")
         for (device in registeredDevices) {
             val heartRateCharacteristic = bluetoothGattServer
-                ?.getService(Utils.HEART_RATE_SERVICE)
-                ?.getCharacteristic(Utils.HEART_RATE_MEASUREMENT)
+                ?.getService(Uuid.HEART_RATE_SERVICE)
+                ?.getCharacteristic(Uuid.HEART_RATE_MEASUREMENT)
             heartRateCharacteristic?.value = heartRate
 
             bluetoothGattServer?.notifyCharacteristicChanged(device, heartRateCharacteristic, false)

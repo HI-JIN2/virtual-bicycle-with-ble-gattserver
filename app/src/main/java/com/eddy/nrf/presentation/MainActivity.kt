@@ -1,4 +1,4 @@
-package com.eddy.nrf
+package com.eddy.nrf.presentation
 
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -13,15 +13,16 @@ import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.eddy.nrf.databinding.ActivityNewBinding
+import com.eddy.nrf.bluetooth.BluetoothServiceManager
+import com.eddy.nrf.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 
 
 private const val TAG = "NewActivity"
 
-class NewActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityNewBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var bluetoothServiceManager: BluetoothServiceManager
 
     private val viewModel: MainViewModel by viewModels()
@@ -30,7 +31,7 @@ class NewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityNewBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         checkPermission()

@@ -1,4 +1,4 @@
-package com.eddy.nrf
+package com.eddy.nrf.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
