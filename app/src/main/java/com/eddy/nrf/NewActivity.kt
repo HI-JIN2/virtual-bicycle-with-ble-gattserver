@@ -163,6 +163,8 @@ class NewActivity : AppCompatActivity() {
 
             val resultArray = value?.let { byteArrayToHexArray(it) }
 
+
+
             runOnUiThread {
                 binding.tvData.text = "client로 부터 받은 데이터는 0x" + resultArray?.joinToString("")
             }
