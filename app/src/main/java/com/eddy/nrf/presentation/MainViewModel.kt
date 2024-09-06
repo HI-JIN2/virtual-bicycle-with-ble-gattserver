@@ -14,7 +14,6 @@ class MainViewModel : ViewModel() {
     val uiState: StateFlow<MainState> = _uiState.asStateFlow()
 
     fun updateUi(gear: Float) {
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -24,10 +23,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    data class MainState(
+        var distance: Float = 2.0f,
+        var speed: Float = 15.0f,
+        var gear: Float = 1.0f,
+    )
 }
-
-data class MainState(
-    var distance: Float = 2.0f,
-    var speed: Float = 15.0f,
-    var gear: Float = 1.0f,
-)
