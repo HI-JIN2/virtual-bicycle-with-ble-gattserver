@@ -1,8 +1,11 @@
 package com.eddy.nrf
 
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.BLUETOOTH_ADVERTISE
+import android.Manifest.permission.BLUETOOTH_CONNECT
+import android.Manifest.permission.BLUETOOTH_SCAN
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -21,10 +24,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
 import android.util.Log
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.eddy.nrf.Utils.byteArrayToHexArray
 import com.eddy.nrf.databinding.ActivityNewBinding
 import java.util.Arrays
@@ -32,7 +37,7 @@ import java.util.Arrays
 
 private const val TAG = "NewActivity"
 
-class NewActivity : Activity() {
+class NewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewBinding
 
 
@@ -46,16 +51,17 @@ class NewActivity : Activity() {
 
     private val heartRateNotificationHandler = android.os.Handler()
 
+    var currentValue = 1
     // 60~100 사이로 랜덤한 심박수를 생성
     private val heartRateRunnable = object : Runnable {
         override fun run() {
-//            val randomHeartRate = (60..100).random()
 
-            for (i in 1..255) {
-                notifyHeartRate(i.toByte())
-                heartRateNotificationHandler.postDelayed(this, 1000)
-            }
+            if (currentValue > 255)
+                currentValue = 1
 
+            notifyHeartRate(currentValue.toByte())
+            heartRateNotificationHandler.postDelayed(this, 1000)
+            currentValue++
         }
     }
 
@@ -158,8 +164,10 @@ class NewActivity : Activity() {
             val resultArray = value?.let { byteArrayToHexArray(it) }
 
             runOnUiThread {
-                binding.textTime.text = resultArray?.joinToString("")
-            }
+                binding.tvData.text = resultArray?.joinToString("")
+//                binding.textTime.text = resultArray?.joinToString("")
+//                Log.d(TAG, ("result" + resultArray?.joinToString("")) ?: "")
+            }//TODO 왜 안떠?
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
@@ -248,14 +256,16 @@ class NewActivity : Activity() {
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityNewBinding.inflate(layoutInflater)
-
-
         setContentView(binding.root)
-//        binding.textTime.text = findViewById(R.id.text_time)
+
+        binding.tvData.text = "nonon"
 
         // Devices with a display should not go to sleep
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        initialization()
 
         bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
@@ -335,6 +345,44 @@ class NewActivity : Activity() {
         }
 
         return true
+    }
+    private fun initialization() {
+
+        // 런타임 권한 확인
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestBlePermissions()
+                return
+            }
+        } else {
+            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestBlePermissions()
+                return
+            }
+
+        }
+    }
+
+    private fun requestBlePermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissions(
+                arrayOf(
+                    BLUETOOTH_SCAN,
+                    BLUETOOTH_CONNECT,
+                    BLUETOOTH_ADVERTISE,
+                    ACCESS_FINE_LOCATION
+                ), 1
+            )
+        } else {
+            requestPermissions(
+                arrayOf(ACCESS_FINE_LOCATION),
+                2
+            )
+        }
     }
 
     //광고 시작
