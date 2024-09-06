@@ -164,10 +164,8 @@ class NewActivity : AppCompatActivity() {
             val resultArray = value?.let { byteArrayToHexArray(it) }
 
             runOnUiThread {
-                binding.tvData.text = resultArray?.joinToString("")
-//                binding.textTime.text = resultArray?.joinToString("")
-//                Log.d(TAG, ("result" + resultArray?.joinToString("")) ?: "")
-            }//TODO 왜 안떠?
+                binding.tvData.text = "client로 부터 받은 데이터는 0x" + resultArray?.joinToString("")
+            }
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
