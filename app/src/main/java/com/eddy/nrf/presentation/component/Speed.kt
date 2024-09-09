@@ -1,5 +1,6 @@
 package com.eddy.nrf.presentation.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -10,10 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.eddy.nrf.presentation.GradientStrokeCircle
+import com.eddy.nrf.presentation.ui.theme.EndColor
+import com.eddy.nrf.presentation.ui.theme.StartColor
 
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
@@ -30,5 +36,28 @@ fun Speed(size: Dp = 200.dp, speed: Double = 22.5) {
             Text(speed.toString(), style = MaterialTheme.typography.headlineMedium)
             Text("km/h")
         }
+    }
+}
+
+@Composable
+fun GradientStrokeCircle(
+    modifier: Modifier = Modifier,
+    colors: List<Color> = listOf(StartColor, EndColor), //여기가 바뀌면 안나옴
+    strokeWidth: Dp = 4.dp
+) {
+    Canvas(modifier = modifier) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+
+        drawCircle(
+            brush = Brush.linearGradient(
+                colors = colors,
+                start = Offset(0f, 0f),
+                end = Offset(canvasWidth, canvasHeight)
+            ),
+            center = Offset(canvasWidth / 2, canvasHeight / 2),
+            radius = (canvasWidth - strokeWidth.toPx()) / 2,
+            style = Stroke(width = strokeWidth.toPx())
+        )
     }
 }
