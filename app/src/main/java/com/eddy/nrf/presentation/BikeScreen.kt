@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.theme.EndColor
-import com.eddy.nrf.presentation.ui.theme.Gray
 import com.eddy.nrf.presentation.ui.theme.Primary
 import com.eddy.nrf.presentation.ui.theme.StartColor
 
@@ -103,6 +102,7 @@ fun Context.findActivity(): Activity? {
 @Preview(showBackground = true)
 @Composable
 fun Pas() {
+    // PAS
     Column(
         modifier = Modifier
             .padding(end = 20.dp),
@@ -110,18 +110,16 @@ fun Pas() {
     ) {
         Text("PAS")
         repeat(3) { index ->
-            Column() {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
                         .size(width = 30.dp, height = 45.dp)
                         .padding(8.dp)
-                        .background(Gray)
+                        .background(Color.Gray)
                 )
-//                        Image(
-////                            painter = painterResource(id = R.drawable.shape_polygon_angle),
-//                            contentDescription = "Polygon",
-//                            modifier = Modifier.size(25.dp)
-//                        )
+                LeftPointingTriangle(
+                    modifier = Modifier.size(25.dp),
+                )
             }
         }
         Text("2")
