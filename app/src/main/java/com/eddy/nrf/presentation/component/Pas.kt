@@ -14,16 +14,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.eddy.nrf.presentation.LeftPointingTriangle
 
 @Preview(showBackground = true)
 @Composable
-fun Pas(select: Int = 2) {
+fun Pas(select: Int = 2, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("PAS")
+        Text(
+            "PAS",
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(5.dp)  // 왼쪽 정렬
+        )
         repeat(3) { index ->
             Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -50,6 +54,11 @@ fun Pas(select: Int = 2) {
                 }
             }
         }
-        Text(select.toString())
+        Text(
+            select.toString(),
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(10.dp), // 왼쪽 정렬
+        )
     }
 }

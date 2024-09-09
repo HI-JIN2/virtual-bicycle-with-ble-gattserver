@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ fun BikeScreen() {
                 .weight(1f)  // 남은 공간을 모두 차지
                 .fillMaxWidth()  // 너비는 부모의 너비로 채움
                 .background(Primary)
-                .padding(30.dp)
+                .padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -50,14 +51,14 @@ fun BikeScreen() {
                     painter = painterResource(id = R.drawable.out_001),
                     contentDescription = "Bike Animation",
                     modifier = Modifier
-                        .width(300.dp)
+                        .width(350.dp)
                         .height(400.dp),
                     contentScale = ContentScale.Fit
                 )
 
                 Speed(200.dp, 22.5)
 
-                Pas(1)
+                Pas(1, modifier = Modifier.padding(end = 10.dp))
             }
         }
         Box(
@@ -70,7 +71,7 @@ fun BikeScreen() {
             Row(
                 modifier = Modifier.fillMaxWidth(),  // Row가 부모의 너비를 가득 채움
                 horizontalArrangement = Arrangement.spacedBy(
-                    100.dp,
+                    150.dp,
                     Alignment.CenterHorizontally
                 ),  // 요소들을 중앙에 정렬하고 16dp 간격 추가
                 verticalAlignment = Alignment.CenterVertically
@@ -88,6 +89,7 @@ fun BikeScreen() {
                     Image(
                         painter = painterResource(id = R.drawable.img_battery),  // 리소스 이미지 사용
                         contentDescription = "Example Image",
+                        modifier = Modifier.size(40.dp)
                     )
                 }
             }

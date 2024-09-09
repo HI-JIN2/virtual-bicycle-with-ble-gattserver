@@ -1,5 +1,6 @@
 package com.eddy.nrf.presentation
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +11,8 @@ import com.eddy.nrf.presentation.ui.theme.NRFTheme
 class InitActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
         setContent {
             NRFTheme {
                 // A surface container using the 'background' color from the theme

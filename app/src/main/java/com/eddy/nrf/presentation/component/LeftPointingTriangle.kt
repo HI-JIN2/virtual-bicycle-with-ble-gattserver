@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation
+package com.eddy.nrf.presentation.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
