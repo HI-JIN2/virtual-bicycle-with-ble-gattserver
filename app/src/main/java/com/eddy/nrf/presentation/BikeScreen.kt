@@ -11,17 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
+import com.eddy.nrf.presentation.component.AnimatedImage
 import com.eddy.nrf.presentation.component.Pas
 import com.eddy.nrf.presentation.component.Speed
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
@@ -46,15 +45,8 @@ fun BikeScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Animation
-                Image(
-                    painter = painterResource(id = R.drawable.out_001),
-                    contentDescription = "Bike Animation",
-                    modifier = Modifier
-                        .width(350.dp)
-                        .height(400.dp),
-                    contentScale = ContentScale.Fit
-                )
+
+                AnimatedImage()
 
                 Speed(200.dp, 22.5)
 
@@ -95,7 +87,6 @@ fun BikeScreen() {
             }
         }
     }
-
 }
 
 
