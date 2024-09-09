@@ -24,17 +24,17 @@ class AnimActivity : AppCompatActivity() {
         anim = binding.imageview.background as AnimationDrawable
         anim.start()
 
-        binding.button.setOnClickListener { view ->
-            if (anim.isRunning) {
-                anim.stop()
-            } else {
-                anim.start()
-            }
-        }
-
-        binding.buttonFast.setOnClickListener { view ->
-            adjustAnimationSpeed(binding.imageview, anim, 25) // 각 프레임의 지속 시간을 100ms로 설정
-        }
+//        binding.button.setOnClickListener { view ->
+//            if (anim.isRunning) {
+//                anim.stop()
+//            } else {
+//                anim.start()
+//            }
+//        }
+//
+//        binding.buttonFast.setOnClickListener { view ->
+//            adjustAnimationSpeed(binding.imageview, anim, 25) // 각 프레임의 지속 시간을 100ms로 설정
+//        }
 //        binding.buttonSlow.setOnClickListener { view ->
 //            adjustAnimationSpeed(binding.imageview, anim, 1000) // 각 프레임의 지속 시간을 100ms로 설정
 //        }

@@ -16,16 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NRF"
         tools:targetApi="31">
-        <activity
-            android:name=".presentation.BikeActivity"
-            android:exported="false"
-            android:label="@string/title_activity_bike"
-            android:theme="@style/Theme.NRF" />
-        <activity
-            android:name=".BikeActivity"
-            android:exported="false"
-            android:theme="@style/Theme.NRF" />
-        <activity
+
+    <activity
             android:name=".presentation.AnimActivity"
             android:exported="true"
             android:screenOrientation="portrait">
