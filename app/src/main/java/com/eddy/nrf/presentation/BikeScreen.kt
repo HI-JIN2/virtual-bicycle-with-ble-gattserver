@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.theme.EndColor
@@ -71,7 +72,7 @@ fun BikeScreen() {
             GradientStrokeCircle()
 
             // PAS
-            Pas()
+            Pas(1)
         }
     }
 }
@@ -134,11 +135,12 @@ fun Pas(select: Int = 2) {
 @Composable
 fun Speed(speed: Float = 22.5f) {
     // Speed
+
+    GradientStrokeCircle(modifier = Modifier.size(200.dp))
     Box(
         modifier = Modifier
             .size(200.dp)
             .clip(CircleShape)
-            .background(brush = Brush.verticalGradient(listOf(StartColor, EndColor)))
             .border(width = 1.dp, color = Color.Black, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
@@ -151,10 +153,11 @@ fun Speed(speed: Float = 22.5f) {
 }
 
 
-@Preview(showBackground = true)
 @Composable
 fun GradientStrokeCircle(
     modifier: Modifier = Modifier,
+    colors: List<Color> = listOf(StartColor, EndColor),
+    strokeWidth: Dp = 4.dp
 ) {
     Canvas(modifier = modifier) {
         val canvasWidth = size.width
@@ -162,16 +165,17 @@ fun GradientStrokeCircle(
 
         drawCircle(
             brush = Brush.linearGradient(
-                colors = listOf(Color.Red, Color.Blue),
+                colors = colors,
                 start = Offset(0f, 0f),
                 end = Offset(canvasWidth, canvasHeight)
             ),
             center = Offset(canvasWidth / 2, canvasHeight / 2),
-            radius = (canvasWidth - 4) / 2,
-            style = Stroke(width = 4F)
+            radius = (canvasWidth - strokeWidth.toPx()) / 2,
+            style = Stroke(width = strokeWidth.toPx())
         )
     }
 }
+
 
 //
 //@Preview(showBackground = true)
