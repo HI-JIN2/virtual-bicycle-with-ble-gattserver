@@ -3,7 +3,6 @@ package com.eddy.nrf.presentation
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,42 +37,42 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.theme.EndColor
-import com.eddy.nrf.presentation.ui.theme.Primary
+import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.StartColor
 
 
 //@Preview
 @Composable
 fun BikeScreen() {
-    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+//    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Primary)
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Primary)
+//    ) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Animation
-            Image(
-                painter = painterResource(id = R.drawable.out_001),
-                contentDescription = "Bike Animation",
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(400.dp),
-                contentScale = ContentScale.Fit
-            )
+        // Animation
+        Image(
+            painter = painterResource(id = R.drawable.out_001),
+            contentDescription = "Bike Animation",
+            modifier = Modifier
+                .width(300.dp)
+                .height(400.dp),
+            contentScale = ContentScale.Fit
+        )
 
-            //Speed
-            Speed()
-            GradientStrokeCircle()
+        //Speed
+        Speed(200.dp, 22.5)
 
-            // PAS
-            Pas(1)
-        }
+
+        // PAS
+        Pas(1)
+//        }
     }
 }
 
@@ -101,7 +100,7 @@ fun Context.findActivity(): Activity? {
 }
 
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun Pas(select: Int = 2) {
     Column(
@@ -133,17 +132,15 @@ fun Pas(select: Int = 2) {
 
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
-fun Speed(speed: Float = 22.5f) {
-    // Speed
-
-    GradientStrokeCircle(modifier = Modifier.size(200.dp))
+fun Speed(size: Dp = 200.dp, speed: Double = 22.5) {
     Box(
         modifier = Modifier
-            .size(200.dp)
+            .size(size)
             .clip(CircleShape)
             .border(width = 1.dp, color = Color.Black, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
+        GradientStrokeCircle(modifier = Modifier.size(size))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Speed")
             Text(speed.toString(), style = MaterialTheme.typography.headlineMedium)
@@ -156,7 +153,7 @@ fun Speed(speed: Float = 22.5f) {
 @Composable
 fun GradientStrokeCircle(
     modifier: Modifier = Modifier,
-    colors: List<Color> = listOf(StartColor, EndColor),
+    colors: List<Color> = listOf(StartColor, EndColor), //여기가 바뀌면 안나옴
     strokeWidth: Dp = 4.dp
 ) {
     Canvas(modifier = modifier) {
@@ -177,10 +174,13 @@ fun GradientStrokeCircle(
 }
 
 
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    NRFTheme {
-//    }
-//}
+@Preview(
+    showBackground = true, widthDp = 700,
+    heightDp = 360
+)
+@Composable
+fun GreetingPreview() {
+    NRFTheme {
+        BikeScreen()
+    }
+}
