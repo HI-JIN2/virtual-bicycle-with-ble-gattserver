@@ -75,10 +75,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.tedpermission)
     implementation(libs.lifecycle.viewmodel.ktx)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 
 }
