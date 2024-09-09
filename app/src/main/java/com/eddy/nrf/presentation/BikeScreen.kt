@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -101,11 +102,9 @@ fun Context.findActivity(): Activity? {
 
 @Preview(showBackground = true)
 @Composable
-fun Pas() {
-    // PAS
+fun Pas(select: Int = 2) {
     Column(
-        modifier = Modifier
-            .padding(end = 20.dp),
+        modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("PAS")
@@ -117,12 +116,16 @@ fun Pas() {
                         .padding(8.dp)
                         .background(Color.Gray)
                 )
-                LeftPointingTriangle(
-                    modifier = Modifier.size(25.dp),
-                )
+                if (index == select) {
+                    LeftPointingTriangle(
+                        modifier = Modifier.size(25.dp),
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(25.dp))
+                }
             }
         }
-        Text("2")
+        Text(select.toString())
     }
 }
 
