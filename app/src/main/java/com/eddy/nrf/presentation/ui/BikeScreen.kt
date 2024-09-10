@@ -26,14 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
-import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 import kotlinx.coroutines.delay
 import java.time.LocalTime
@@ -69,9 +66,16 @@ fun BikeScreen(
 
                 Speed(200.dp, bikeUiState.speed)
 
-                Pas(modifier = Modifier.padding(end = 10.dp),
-                    select = selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
-                    onSelect = { newIndex -> selected = newIndex })
+                Pas(
+                    modifier = Modifier.padding(end = 10.dp),
+                    select = bikeUiState.gear,
+//                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
+                    onSelect = { newIndex ->
+//                        selected = newIndex
+                        bikeViewModel.changeGear(newIndex.toFloat())
+                    },
+                    viewModel = bikeViewModel
+                )
             }
         }
         Box(

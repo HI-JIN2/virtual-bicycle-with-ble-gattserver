@@ -16,13 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.eddy.nrf.presentation.ui.BikeViewModel
 
 @Preview(showBackground = true)
 @Composable
 fun Pas(
     modifier: Modifier = Modifier,
-    select: Float = 2f,
-    onSelect: (Int) -> Unit = {}// 선택 콜백
+    select: Float = 0f,
+    onSelect: (Int) -> Unit = {},// 선택 콜백,
+    viewModel: BikeViewModel = BikeViewModel()
 ) {
     Column(
         modifier = Modifier,
@@ -42,8 +44,9 @@ fun Pas(
                             .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
                             .background(Color.Gray)
-                            .clickable{
+                            .clickable {
                                 Log.d("TAG", "Pas: $index")
+//                                viewModel.uiState.value.gear = index.toFloat()
                             }
                     )
                     LeftPointingTriangle(
@@ -56,7 +59,8 @@ fun Pas(
                             .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
                             .background(Color.White)
-                            .clickable { onSelect(index)
+                            .clickable {
+//                                onSelect(index)
                                 Log.d("TAG", "Pas:selected $index")
                             } // 클릭 이벤트로 선택 변경
                     )
