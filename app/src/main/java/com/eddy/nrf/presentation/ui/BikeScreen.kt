@@ -134,7 +134,7 @@ fun realTimeClock(): String {
     heightDp = 360
 )
 @Composable
-fun GreetingPreview() {
+fun BikePreview() {
     NRFTheme {
         BikeScreen()
     }
