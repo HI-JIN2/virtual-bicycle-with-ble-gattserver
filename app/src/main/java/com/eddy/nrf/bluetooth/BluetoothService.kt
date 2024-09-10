@@ -36,6 +36,7 @@ class BluetoothService(
     private val uiStateFlow: StateFlow<BikeUiState>
 
 ) {
+    private var isReceiverRegistered = false
 
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -53,14 +54,20 @@ class BluetoothService(
 
     @SuppressLint("MissingPermission")
     fun initializeBluetooth() {
+
+
         val bluetoothAdapter = bluetoothManager.adapter
         if (!checkBluetoothSupport(bluetoothAdapter)) {
             return //블루투스 안되는 기기 거르기
         }
 
-        //리시버 등록
-        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        context.registerReceiver(bluetoothReceiver, filter)
+        // 리시버 등록 코드 추가
+        if (!isReceiverRegistered) {
+            val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+            context.registerReceiver(bluetoothReceiver, filter)
+            isReceiverRegistered = true
+        }
+
 
         if (!bluetoothAdapter.isEnabled) {
             bluetoothAdapter.enable()
@@ -309,12 +316,32 @@ class BluetoothService(
     }
 
     fun cleanup() {
-        context.unregisterReceiver(bluetoothReceiver)
-        // GATT 서버 및 광고 종료 로직
+        // Bluetooth 연결 상태 확인
+        val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)
 
+        if (connectedDevices.isNotEmpty()) {
+            Log.i(TAG, "Bluetooth devices are still connected: $connectedDevices")
+            for (device in connectedDevices) {
+                bluetoothGattServer?.cancelConnection(device)
+                Log.i(TAG, "Disconnected device: $device")
+            }
+        } else {
+            Log.i(TAG, "No Bluetooth devices connected")
+        }
+
+        // 리시버 등록 상태를 확인한 후에만 해제
+        if (isReceiverRegistered) {
+            context.unregisterReceiver(bluetoothReceiver)
+            isReceiverRegistered = false
+        } else {
+            Log.w(TAG, "Receiver was not registered")
+        }
+
+        // GATT 서버 및 광고 종료 로직
         stopServer()
         stopAdvertising()
         heartRateNotificationHandler.removeCallbacks(heartRateRunnable)
+
     }
 
     private fun checkBluetoothSupport(bluetoothAdapter: BluetoothAdapter?): Boolean {
@@ -338,7 +365,6 @@ class BluetoothService(
                     startAdvertising()
                     startServer()
                     heartRateNotificationHandler.post(heartRateRunnable)  // Start heart rate notifications
-
                 }
 
                 BluetoothAdapter.STATE_OFF -> {

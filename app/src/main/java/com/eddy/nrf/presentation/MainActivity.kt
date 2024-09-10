@@ -50,14 +50,14 @@ class MainActivity : ComponentActivity() {
         super.onStop()
 
         //Todo 안해도 될까???
-//        bluetoothServiceManager.cleanup()
+        bluetoothService.cleanup()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDestroy() {
         super.onDestroy()
 
-//        bluetoothServiceManager.cleanup()
+        bluetoothService.cleanup()
     }
 
     private fun checkPermission() {
