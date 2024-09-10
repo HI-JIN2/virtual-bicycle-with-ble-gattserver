@@ -2,7 +2,7 @@ package com.eddy.nrf.presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eddy.nrf.utils.Util.floatToByteArray
+import com.eddy.nrf.utils.Util.floatTo4ByteArray
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,9 +32,9 @@ class BikeViewModel : ViewModel() {
     fun getUiState(): ByteArray{
         val buffer = ByteBuffer.allocate(9)
         val data = uiState.value
-        buffer.put(floatToByteArray(data.distance,4))
-        buffer.put(floatToByteArray(data.speed,4))
-        buffer.put(floatToByteArray(data.gear,1))
+        buffer.put(floatTo4ByteArray(data.distance))
+        buffer.put(floatTo4ByteArray(data.speed))
+        buffer.put(data.gear.toInt().toByte())
         val resultArray = buffer.array()
 
         return resultArray
