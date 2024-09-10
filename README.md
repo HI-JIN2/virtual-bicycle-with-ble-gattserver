@@ -13,6 +13,8 @@
 
   
 ## Architecture
+[compose - viewmodel](https://developer.android.com/codelabs/basic-android-kotlin-compose-viewmodel-and-state?hl=ko#4)
+
 <img width="507" alt="image" src="https://github.com/user-attachments/assets/1efb3af7-4310-4f0f-85ac-466fcfc98218">
 <img width="386" alt="스크린샷 2024-09-10 오전 9 24 05" src="https://github.com/user-attachments/assets/3dbd62fc-037a-4427-a117-fa93dde0e008">
 
