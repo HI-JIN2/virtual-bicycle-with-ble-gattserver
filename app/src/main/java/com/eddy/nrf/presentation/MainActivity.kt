@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         checkPermission()
 
-        bluetoothService = BluetoothService(this, bikeViewModel, bikeViewModel.uiState)
+        bluetoothService = BluetoothService(this, bikeViewModel)
         bluetoothService.initializeBluetooth()
 
         setContent {

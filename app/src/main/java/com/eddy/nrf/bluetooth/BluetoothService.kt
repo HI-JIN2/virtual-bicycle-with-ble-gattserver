@@ -20,12 +20,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
-import com.eddy.nrf.presentation.ui.BikeUiState
 import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.utils.Util.byteArrayToHexArray
 import com.eddy.nrf.utils.Util.floatTo4ByteArray
 import com.eddy.nrf.utils.Uuid
-import kotlinx.coroutines.flow.StateFlow
 import java.nio.ByteBuffer
 import java.util.Arrays
 
@@ -33,20 +31,16 @@ import java.util.Arrays
 class BluetoothService(
     private val context: Context,
     private val bikeViewModel: BikeViewModel,
-    private val uiStateFlow: StateFlow<BikeUiState>
-
 ) {
-    private var isReceiverRegistered = false
-
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private var bluetoothGattServer: BluetoothGattServer? = null
-
     private val registeredDevices = mutableSetOf<BluetoothDevice>()
-
     private val heartRateNotificationHandler = android.os.Handler()
 
+    private var isReceiverRegistered = false
 
+    private val uiStateFlow = bikeViewModel.uiState
     val distance = uiStateFlow.value.distance
     val speed = uiStateFlow.value.speed
     var gear = uiStateFlow.value.gear
@@ -54,7 +48,6 @@ class BluetoothService(
 
     @SuppressLint("MissingPermission")
     fun initializeBluetooth() {
-
 
         val bluetoothAdapter = bluetoothManager.adapter
         if (!checkBluetoothSupport(bluetoothAdapter)) {
@@ -68,10 +61,9 @@ class BluetoothService(
             isReceiverRegistered = true
         }
 
-
         if (!bluetoothAdapter.isEnabled) {
             bluetoothAdapter.enable()
-        } else {
+        } else { //자동 광고
             startAdvertising()
             startServer()
             heartRateNotificationHandler.post(heartRateRunnable)
@@ -315,6 +307,7 @@ class BluetoothService(
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun cleanup() {
         // Bluetooth 연결 상태 확인
         val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)
