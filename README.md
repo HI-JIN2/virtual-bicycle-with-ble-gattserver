@@ -4,13 +4,19 @@
 
 - 스마트폰을 Bluetooth Server로 만들어 센서의 역할을 하게 한다.
 
-## using
+## Library
 - [BluetoothLeAdvertiser](https://developer.android.com/reference/android/bluetooth/le/BluetoothLeAdvertiser)
     - [AdvertiseCallback](https://developer.android.com/reference/android/bluetooth/le/AdvertiseCallback)    
 - [BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer)
     - [BluetoothGattServerCallback](https://developer.android.com/reference/android/bluetooth/BluetoothGattServerCallback)
-- Animation
+- Jetpack Compose
 
+  
+## Architecture
+<img width="507" alt="image" src="https://github.com/user-attachments/assets/1efb3af7-4310-4f0f-85ac-466fcfc98218">
+<img width="386" alt="스크린샷 2024-09-10 오전 9 24 05" src="https://github.com/user-attachments/assets/3dbd62fc-037a-4427-a117-fa93dde0e008">
+
+<img width="668" alt="스크린샷 2024-09-10 오전 9 23 48" src="https://github.com/user-attachments/assets/069f5c21-196d-4edf-982e-b0c640393516">
 
 ## 기기
 
