@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.eddy.nrf.bluetooth.BluetoothServiceManager
 import com.eddy.nrf.databinding.ActivityMainBinding
+import com.eddy.nrf.presentation.ui.BikeViewModel
 import kotlinx.coroutines.launch
 
 
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var bluetoothServiceManager: BluetoothServiceManager
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: BikeViewModel by viewModels()
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
