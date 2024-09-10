@@ -6,12 +6,10 @@ import android.bluetooth.BluetoothGattService
 import com.eddy.nrf.utils.Uuid
 import java.util.UUID
 
-class BluetoothServiceBuilder {
-    private val service: BluetoothGattService
+class BluetoothServiceBuilder(uuid: UUID, serviceType: Int) {
+    //블루투스 생성 과정을 빌더로 만든 클래스
 
-    constructor(uuid: UUID, serviceType: Int) {
-        service = BluetoothGattService(uuid, serviceType)
-    }
+    private val service: BluetoothGattService = BluetoothGattService(uuid, serviceType)
 
     fun addCharacteristic(
         uuid: UUID,

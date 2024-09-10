@@ -6,8 +6,8 @@ import android.content.Context
 import com.eddy.nrf.presentation.ui.BikeViewModel
 
 class BluetoothService(
-    private val context: Context,
-    private val bikeViewModel: BikeViewModel,
+    context: Context,
+    bikeViewModel: BikeViewModel,
 ) {
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -18,10 +18,8 @@ class BluetoothService(
     private val heartRateNotificationManager: HeartRateNotificationManager
     private val bluetoothStateReceiver: BluetoothStateReceiver
 
-    private var isReceiverRegistered = false
 
-
-    init {
+    init { //블루투스 서비스가 거대해지는 것을 막기 위해서 단일 책임원칙에 따른 관심사 분리를 했음
         advertisingManager = AdvertisingManager(bluetoothAdapter)
         gattServerManager = GattServerManager(context, bluetoothManager, bikeViewModel)
         heartRateNotificationManager =
@@ -35,7 +33,7 @@ class BluetoothService(
     }
 
     fun initializeBluetooth() {
-        if (!checkBluetoothSupport(bluetoothAdapter)) {
+        if (!checkBluetoothSupport(bluetoothAdapter)) {//블루투스 미지원 기기 거름
             return
         }
 
