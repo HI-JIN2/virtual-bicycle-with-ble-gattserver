@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation.component
+package com.eddy.nrf.presentation.ui.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,7 @@ import com.eddy.nrf.presentation.ui.theme.StartColor
 
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
-fun Speed(size: Dp = 200.dp, speed: Double = 22.5) {
+fun Speed(size: Dp = 200.dp, speed: Float = 22.5f) {
     Box(
         modifier = Modifier
             .size(size)

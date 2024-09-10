@@ -1,74 +1,63 @@
 package com.eddy.nrf.presentation
 
-
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.BLUETOOTH_ADVERTISE
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.Manifest.permission.BLUETOOTH_SCAN
-import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.eddy.nrf.bluetooth.BluetoothServiceManager
-import com.eddy.nrf.databinding.ActivityMainBinding
-import kotlinx.coroutines.launch
+import androidx.annotation.RequiresApi
+import com.eddy.nrf.bluetooth.BluetoothService
+import com.eddy.nrf.presentation.ui.BikeScreen
+import com.eddy.nrf.presentation.ui.BikeViewModel
+import com.eddy.nrf.presentation.ui.theme.NRFTheme
 
+class MainActivity : ComponentActivity() {
 
-private const val TAG = "NewActivity"
+    private val bikeViewModel: BikeViewModel by viewModels()
 
-class MainActivity : AppCompatActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private lateinit var bluetoothService: BluetoothService
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var bluetoothServiceManager: BluetoothServiceManager
-
-    private val viewModel: MainViewModel by viewModels()
-
-    @SuppressLint("MissingPermission")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         checkPermission()
 
-        bluetoothServiceManager = BluetoothServiceManager(viewModel, this)
-        bluetoothServiceManager.initializeBluetooth()
+        bluetoothService = BluetoothService(this, bikeViewModel, bikeViewModel.uiState)
+        bluetoothService.initializeBluetooth()
 
-        val data = viewModel.uiState.value
-        binding.tvData.text =
-            "speed: ${data.speed}\n distance: ${data.distance}\ngear: ${data.gear}"
-
-        setData()
-
-        // Devices with a display should not go to sleep
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    private fun setData() {
-        lifecycleScope.launch {
-            viewModel.uiState.collect { data ->
-                binding.tvData.text =
-                    "speed: ${data.speed}\n distance: ${data.distance}\ngear: ${data.gear}"
+        setContent {
+            NRFTheme {
+                // A surface container using the 'background' color from the theme
+                BikeScreen(bikeViewModel)
             }
         }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStop() {
         super.onStop()
 
-        bluetoothServiceManager.cleanup()
+        //Todo 안해도 될까???
+//        bluetoothServiceManager.cleanup()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onDestroy() {
         super.onDestroy()
 
-        bluetoothServiceManager.cleanup()
+//        bluetoothServiceManager.cleanup()
     }
 
     private fun checkPermission() {

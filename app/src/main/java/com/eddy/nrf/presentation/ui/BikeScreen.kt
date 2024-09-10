@@ -1,5 +1,7 @@
-package com.eddy.nrf.presentation
+package com.eddy.nrf.presentation.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,23 +15,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
-import com.eddy.nrf.presentation.component.AnimatedImage
-import com.eddy.nrf.presentation.component.Pas
-import com.eddy.nrf.presentation.component.Speed
-import com.eddy.nrf.presentation.ui.theme.NRFTheme
+import com.eddy.nrf.presentation.ui.component.AnimatedImage
+import com.eddy.nrf.presentation.ui.component.Pas
+import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.theme.Primary
+import kotlinx.coroutines.delay
+import java.time.LocalTime
 
 
-//@Preview
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BikeScreen() {
+fun BikeScreen(
+    bikeViewModel: BikeViewModel
+) {
+
+    val bikeUiState by bikeViewModel.uiState.collectAsState()
+
+    var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
+
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
     ) {
@@ -48,9 +64,18 @@ fun BikeScreen() {
 
                 AnimatedImage()
 
-                Speed(200.dp, 22.5)
+                Speed(200.dp, bikeUiState.speed)
 
-                Pas(1, modifier = Modifier.padding(end = 10.dp))
+                Pas(
+                    modifier = Modifier.padding(end = 10.dp),
+                    select = bikeUiState.gear,
+//                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
+                    onSelect = { newIndex ->
+//                        selected = newIndex
+                        bikeViewModel.changeGear(newIndex.toFloat())
+                    },
+                    viewModel = bikeViewModel
+                )
             }
         }
         Box(
@@ -69,13 +94,12 @@ fun BikeScreen() {
                 verticalAlignment = Alignment.CenterVertically
             )  // 세로 방향으로 중앙 정렬
             {
-                Text(text = "08:30 PM", modifier = Modifier)
+                Text(text = realTimeClock(), modifier = Modifier)
                 Text(text = "ODO")
-                Text(text = "190km")
+                Text(text = bikeUiState.distance.toString() + "km")
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
-
                 ) {
                     Text(text = "100%")
                     Image(
@@ -89,14 +113,33 @@ fun BikeScreen() {
     }
 }
 
-
-@Preview(
-    showBackground = true, widthDp = 700,
-    heightDp = 360
-)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GreetingPreview() {
-    NRFTheme {
-        BikeScreen()
+fun realTimeClock(): String {
+    var currentTime by remember { mutableStateOf(LocalTime.now()) } // 현재 시간 상태
+
+    // LaunchedEffect를 사용하여 일정 시간마다 상태 업데이트
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = LocalTime.now() // 현재 시간 갱신
+            delay(1000L) // 1초마다 시간 업데이트
+        }
     }
+
+    val timeText = "${currentTime.hour}:${currentTime.minute}:${currentTime.second}"
+
+    return timeText
 }
+
+
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(
+//    showBackground = true, widthDp = 700,
+//    heightDp = 360
+//)
+//@Composable
+//fun BikePreview() {
+//    NRFTheme {
+//        BikeScreen()
+//    }
+//}

@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation.component
+package com.eddy.nrf.presentation.ui.component
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

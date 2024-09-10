@@ -1,6 +1,8 @@
-package com.eddy.nrf.presentation.component
+package com.eddy.nrf.presentation.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.eddy.nrf.presentation.ui.BikeViewModel
 
 @Preview(showBackground = true)
 @Composable
-fun Pas(select: Int = 2, modifier: Modifier = Modifier) {
+fun Pas(
+    modifier: Modifier = Modifier,
+    select: Float = 0f,
+    onSelect: (Int) -> Unit = {},// 선택 콜백,
+    viewModel: BikeViewModel = BikeViewModel()
+) {
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -30,32 +38,40 @@ fun Pas(select: Int = 2, modifier: Modifier = Modifier) {
         )
         repeat(3) { index ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-
-                if (index == select) {
+                if (index == select.toInt()) {
                     Box(
                         modifier = Modifier
-                            .size(width = 30.dp, height = 45.dp)
+                            .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
                             .background(Color.Gray)
+                            .clickable {
+                                Log.d("TAG", "Pas: $index")
+//                                viewModel.uiState.value.gear = index.toFloat()
+                            }
                     )
                     LeftPointingTriangle(
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(30.dp),
                     )
 
                 } else {
                     Box(
                         modifier = Modifier
-                            .size(width = 30.dp, height = 45.dp)
+                            .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
                             .background(Color.White)
+                            .clickable {
+//                                onSelect(index)
+                                Log.d("TAG", "Pas:selected $index")
+                            } // 클릭 이벤트로 선택 변경
                     )
-                    Spacer(modifier = Modifier.size(25.dp))
+                    Spacer(modifier = Modifier.size(30.dp))
 
                 }
+
             }
         }
         Text(
-            select.toString(),
+            select.toInt().toString(),
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(10.dp), // 왼쪽 정렬

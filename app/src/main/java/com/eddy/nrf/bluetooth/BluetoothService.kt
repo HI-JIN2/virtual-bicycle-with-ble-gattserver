@@ -20,17 +20,21 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
-import com.eddy.nrf.presentation.MainViewModel
+import com.eddy.nrf.presentation.ui.BikeUiState
+import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.utils.Util.byteArrayToHexArray
-import com.eddy.nrf.utils.Util.floatToByteArray
+import com.eddy.nrf.utils.Util.floatTo4ByteArray
 import com.eddy.nrf.utils.Uuid
+import kotlinx.coroutines.flow.StateFlow
 import java.nio.ByteBuffer
 import java.util.Arrays
 
 
-class BluetoothServiceManager(
-    private val viewModel: MainViewModel,
+class BluetoothService(
     private val context: Context,
+    private val bikeViewModel: BikeViewModel,
+    private val uiStateFlow: StateFlow<BikeUiState>
+
 ) {
 
     private val bluetoothManager: BluetoothManager =
@@ -41,10 +45,10 @@ class BluetoothServiceManager(
 
     private val heartRateNotificationHandler = android.os.Handler()
 
-    //    private val heartRateHandler = Handler()
-    private var distance: Float = 15F
-    private var speed: Float = 20F
-    private var gear: Byte = 1
+
+    val distance = uiStateFlow.value.distance
+    val speed = uiStateFlow.value.speed
+    var gear = uiStateFlow.value.gear
 
 
     @SuppressLint("MissingPermission")
@@ -54,6 +58,7 @@ class BluetoothServiceManager(
             return //블루투스 안되는 기기 거르기
         }
 
+        //리시버 등록
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         context.registerReceiver(bluetoothReceiver, filter)
 
@@ -167,6 +172,7 @@ class BluetoothServiceManager(
             }
         }
 
+        //Client WRITE -> server
         @SuppressLint("MissingPermission")
         override fun onCharacteristicWriteRequest(
             device: BluetoothDevice?,
@@ -187,13 +193,19 @@ class BluetoothServiceManager(
                 value
             )
 
-            Log.d(TAG, Arrays.toString(value))
+            Log.d(TAG, Arrays.toString(value)) //당연히 잘 옴
+
+            //Todo 기어 받아오기
 
             val resultArray = value?.let { byteArrayToHexArray(it) }
-            gear = resultArray?.get(0)?.toByte() ?: 1
+            val newgear = resultArray?.get(0)?.toByte() ?: 1
 
+            bikeViewModel.changeGear(newgear.toFloat())
+            gear = newgear.toFloat()
+            Log.d(TAG, "기어값이 바뀌었습니다. : $newgear   ${gear}")
+            //Todo 여기가 문제임 두번째 값이 안바뀜.
+            //로딩하는게 필요한가...?
 
-            updateUi(gear.toFloat())
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
@@ -280,6 +292,7 @@ class BluetoothServiceManager(
         }
     }
 
+    //bytearray를 받아서 캐릭터에 담음. 그리고 nofity
     @SuppressLint("MissingPermission")
     private fun notifyHeartRate(heartRate: ByteArray) {
         if (registeredDevices.isEmpty()) return
@@ -315,7 +328,7 @@ class BluetoothServiceManager(
         return true
     }
 
-    //리시버를 통해 notification 함
+    //리시버를 통해 보낼 수 있는 상태인지를 확인함. 수신 가능하다면 광고 키고, 서버 키고 핸들러 이용해서 노티를 보냄
     private val bluetoothReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF)
@@ -338,24 +351,21 @@ class BluetoothServiceManager(
         }
     }
 
+
+    //러너블 객체에서 핸들러를 조작함
     private val heartRateRunnable = object : Runnable {
+        //Todo notify 여기서
         override fun run() {
 
             val buffer = ByteBuffer.allocate(9)
-            buffer.put(floatToByteArray(distance))
-            buffer.put(floatToByteArray(speed))
-            buffer.put(gear)
+            buffer.put(floatTo4ByteArray(distance))
+            buffer.put(floatTo4ByteArray(speed))
+            buffer.put(gear.toInt().toByte())
             val resultArray = buffer.array()
-
-            Log.d(TAG, "거리+속도+기어 : ${byteArrayToHexArray(resultArray).joinToString(" ")}")
 
             notifyHeartRate(resultArray)
             heartRateNotificationHandler.postDelayed(this, 1000)
         }
-    }
-
-    fun updateUi(gear: Float) {
-        viewModel.updateUi(gear)
     }
 
     companion object {
