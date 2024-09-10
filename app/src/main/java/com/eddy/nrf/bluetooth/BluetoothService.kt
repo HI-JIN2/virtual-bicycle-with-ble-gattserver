@@ -46,6 +46,11 @@ class BluetoothService(
     private val heartRateNotificationHandler = android.os.Handler()
 
 
+    val distance = uiStateFlow.value.distance
+    val speed = uiStateFlow.value.speed
+    var gear = uiStateFlow.value.gear
+
+
     @SuppressLint("MissingPermission")
     fun initializeBluetooth() {
         val bluetoothAdapter = bluetoothManager.adapter
@@ -188,15 +193,18 @@ class BluetoothService(
                 value
             )
 
-            Log.d(TAG, Arrays.toString(value))
+            Log.d(TAG, Arrays.toString(value)) //당연히 잘 옴
 
             //Todo 기어 받아오기
 
             val resultArray = value?.let { byteArrayToHexArray(it) }
-            val gear = resultArray?.get(0)?.toByte() ?: 1
+            val newgear = resultArray?.get(0)?.toByte() ?: 1
 
-            bikeViewModel.changeGear(gear.toFloat())
-            Log.d(TAG, "기어값이 바뀌었습니다. : $gear   ${bikeViewModel.uiState.value.gear}")
+            bikeViewModel.changeGear(newgear.toFloat())
+            gear = newgear.toFloat()
+            Log.d(TAG, "기어값이 바뀌었습니다. : $newgear   ${gear}")
+            //Todo 여기가 문제임 두번째 값이 안바뀜.
+            //로딩하는게 필요한가...?
 
 
             if (responseNeeded) {
@@ -300,12 +308,6 @@ class BluetoothService(
         }
     }
 
-//    fun sendNewData(uiState: BikeUiState) {
-//        // UIState를 블루투스 데이터로 변환
-//        val dataToSend = convertUIStateToBluetoothData(uiState)
-//        notifyHeartRate(dataToSend)
-//    }
-
     fun cleanup() {
         context.unregisterReceiver(bluetoothReceiver)
         // GATT 서버 및 광고 종료 로직
@@ -350,32 +352,16 @@ class BluetoothService(
     }
 
 
-//
-
     //러너블 객체에서 핸들러를 조작함
     private val heartRateRunnable = object : Runnable {
         //Todo notify 여기서
-
-        val data = bikeViewModel.uiState.value
-
         override fun run() {
 
             val buffer = ByteBuffer.allocate(9)
-            buffer.put(floatTo4ByteArray(data.distance))
-            buffer.put(floatTo4ByteArray(data.speed))
-            buffer.put((data.gear).toInt().toByte())
+            buffer.put(floatTo4ByteArray(distance))
+            buffer.put(floatTo4ByteArray(speed))
+            buffer.put(gear.toInt().toByte())
             val resultArray = buffer.array()
-
-
-//            bikeViewModel.getUiState()
-            Log.d(
-                TAG, "거리+속도+기어 : ${
-                    byteArrayToHexArray(
-                        resultArray
-                    ).joinToString(" ")
-                }"
-            )
-
 
             notifyHeartRate(resultArray)
             heartRateNotificationHandler.postDelayed(this, 1000)
