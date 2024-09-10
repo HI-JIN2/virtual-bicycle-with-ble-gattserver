@@ -1,5 +1,7 @@
 package com.eddy.nrf.presentation.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,11 +35,15 @@ import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
+import kotlinx.coroutines.delay
+import java.time.LocalTime
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BikeScreen(
-    bikeViewModel: BikeViewModel = viewModel()) {
+    bikeViewModel: BikeViewModel = viewModel()
+) {
 
     val bikeUiState by bikeViewModel.uiState.collectAsState()
 
@@ -64,7 +71,7 @@ fun BikeScreen(
 
                 Pas(modifier = Modifier.padding(end = 10.dp),
                     select = selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
-                    onSelect = {newIndex -> selected= newIndex} )
+                    onSelect = { newIndex -> selected = newIndex })
             }
         }
         Box(
@@ -83,13 +90,12 @@ fun BikeScreen(
                 verticalAlignment = Alignment.CenterVertically
             )  // 세로 방향으로 중앙 정렬
             {
-                Text(text = "08:30 PM", modifier = Modifier)
+                Text(text = realTimeClock(), modifier = Modifier)
                 Text(text = "ODO")
-                Text(text = bikeUiState.distance.toString())
+                Text(text = bikeUiState.distance.toString() + "km")
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
-
                 ) {
                     Text(text = "100%")
                     Image(
@@ -103,7 +109,26 @@ fun BikeScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun realTimeClock(): String {
+    var currentTime by remember { mutableStateOf(LocalTime.now()) } // 현재 시간 상태
 
+    // LaunchedEffect를 사용하여 일정 시간마다 상태 업데이트
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = LocalTime.now() // 현재 시간 갱신
+            delay(1000L) // 1초마다 시간 업데이트
+        }
+    }
+
+    val timeText = "${currentTime.hour}:${currentTime.minute}:${currentTime.second}"
+
+    return timeText
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     showBackground = true, widthDp = 700,
     heightDp = 360
