@@ -19,7 +19,7 @@ class BikeViewModel : ViewModel() {
 //        onBluetoothDataReceived(1F)
 //    }
 
-    fun onBluetoothDataReceived(gear: Float) {
+    fun changeGear(gear: Float) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
