@@ -20,7 +20,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
-import com.eddy.nrf.presentation.MainViewModel
+import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.utils.Util.byteArrayToHexArray
 import com.eddy.nrf.utils.Util.floatToByteArray
 import com.eddy.nrf.utils.Uuid
@@ -29,7 +29,7 @@ import java.util.Arrays
 
 
 class BluetoothServiceManager(
-    private val viewModel: MainViewModel,
+    private val viewModel: BikeViewModel,
     private val context: Context,
 ) {
 

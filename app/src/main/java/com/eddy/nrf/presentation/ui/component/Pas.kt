@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation.component
+package com.eddy.nrf.presentation.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

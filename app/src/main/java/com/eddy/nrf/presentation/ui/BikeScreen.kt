@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation
+package com.eddy.nrf.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,23 +13,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eddy.nrf.R
-import com.eddy.nrf.presentation.component.AnimatedImage
-import com.eddy.nrf.presentation.component.Pas
-import com.eddy.nrf.presentation.component.Speed
+import com.eddy.nrf.presentation.ui.component.AnimatedImage
+import com.eddy.nrf.presentation.ui.component.Pas
+import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 
 
-//@Preview
 @Composable
-fun BikeScreen() {
+fun BikeScreen(
+    bikeViewModel: BikeViewModel = viewModel()) {
+    val gameUiState by bikeViewModel.uiState.collectAsState()
+
+
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
     ) {

@@ -1,4 +1,4 @@
-package com.eddy.nrf.presentation
+package com.eddy.nrf.presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class BikeViewModel : ViewModel() {
 
-    private val _uiState: MutableStateFlow<MainState> = MutableStateFlow(MainState())
-    val uiState: StateFlow<MainState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(BikeUiState())
+    val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
 
     fun updateUi(gear: Float) {
         viewModelScope.launch {
@@ -22,10 +22,4 @@ class MainViewModel : ViewModel() {
             }
         }
     }
-
-    data class MainState(
-        var distance: Float = 2.0f,
-        var speed: Float = 15.0f,
-        var gear: Float = 1.0f,
-    )
 }
