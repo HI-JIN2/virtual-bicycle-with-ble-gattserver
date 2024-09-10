@@ -15,6 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,8 +37,10 @@ import com.eddy.nrf.presentation.ui.theme.Primary
 @Composable
 fun BikeScreen(
     bikeViewModel: BikeViewModel = viewModel()) {
-    val gameUiState by bikeViewModel.uiState.collectAsState()
 
+    val bikeUiState by bikeViewModel.uiState.collectAsState()
+
+    var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
 
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
@@ -54,9 +60,11 @@ fun BikeScreen(
 
                 AnimatedImage()
 
-                Speed(200.dp, 22.5)
+                Speed(200.dp, bikeUiState.speed)
 
-                Pas(1, modifier = Modifier.padding(end = 10.dp))
+                Pas(modifier = Modifier.padding(end = 10.dp),
+                    select = selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
+                    onSelect = {newIndex -> selected= newIndex} )
             }
         }
         Box(
@@ -77,7 +85,7 @@ fun BikeScreen(
             {
                 Text(text = "08:30 PM", modifier = Modifier)
                 Text(text = "ODO")
-                Text(text = "190km")
+                Text(text = bikeUiState.distance.toString())
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬

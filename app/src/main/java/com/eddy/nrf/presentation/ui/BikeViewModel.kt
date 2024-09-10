@@ -13,6 +13,10 @@ class BikeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BikeUiState())
     val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
 
+    init {
+        updateUi(1F)
+    }
+
     fun updateUi(gear: Float) {
         viewModelScope.launch {
             _uiState.update {
