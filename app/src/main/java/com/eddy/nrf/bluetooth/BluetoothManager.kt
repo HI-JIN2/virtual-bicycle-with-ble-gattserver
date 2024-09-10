@@ -29,7 +29,7 @@ import java.util.Arrays
 
 
 class BluetoothServiceManager(
-    private val viewModel: BikeViewModel,
+//    private val viewModel: BikeViewModel,
     private val context: Context,
 ) {
 
@@ -54,6 +54,7 @@ class BluetoothServiceManager(
             return //블루투스 안되는 기기 거르기
         }
 
+        //리시버 등록
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         context.registerReceiver(bluetoothReceiver, filter)
 
@@ -65,6 +66,8 @@ class BluetoothServiceManager(
             heartRateNotificationHandler.post(heartRateRunnable)
         }
     }
+
+
 
 
     @SuppressLint("MissingPermission")
@@ -193,7 +196,7 @@ class BluetoothServiceManager(
             gear = resultArray?.get(0)?.toByte() ?: 1
 
 
-            updateUi(gear.toFloat())
+//            updateUi(gear.toFloat())
 
             if (responseNeeded) {
                 bluetoothGattServer?.sendResponse(
@@ -353,10 +356,10 @@ class BluetoothServiceManager(
             heartRateNotificationHandler.postDelayed(this, 1000)
         }
     }
-
-    fun updateUi(gear: Float) {
-        viewModel.updateUi(gear)
-    }
+//
+//    fun updateUi(gear: Float) {
+//        viewModel.onBluetoothDataReceived(gear)
+//    }
 
     companion object {
         val TAG = "BluetoothServiceManager"
