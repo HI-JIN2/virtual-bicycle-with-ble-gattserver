@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
 
-        //Todo 안해도 될까???
+        //이거 빼먹으면 안됨
         bluetoothService.cleanup()
     }
 

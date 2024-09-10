@@ -21,7 +21,6 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
         compose = true
     }
 
@@ -84,4 +83,5 @@ dependencies {
 //    implementation(libs.hilt.navigation.compose)
 
     implementation(libs.viewmodel.compose)
+    implementation(libs.timber)
 }
