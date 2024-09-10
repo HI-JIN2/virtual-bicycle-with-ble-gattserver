@@ -7,8 +7,8 @@ import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.os.ParcelUuid
-import android.util.Log
 import com.eddy.nrf.utils.Uuid
+import timber.log.Timber
 
 class AdvertisingManager(private val bluetoothAdapter: BluetoothAdapter) {
 
@@ -33,7 +33,7 @@ class AdvertisingManager(private val bluetoothAdapter: BluetoothAdapter) {
                 .build()
 
             it.startAdvertising(settings, data, advertiseCallback)
-        } ?: Log.w(TAG, "Failed to create advertiser")
+        } ?: Timber.w("Failed to create advertiser")
     }
 
     @SuppressLint("MissingPermission")
@@ -43,15 +43,11 @@ class AdvertisingManager(private val bluetoothAdapter: BluetoothAdapter) {
 
     private val advertiseCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-            Log.i(TAG, "LE Advertise Started.")
+            Timber.i("LE Advertise Started.")
         }
 
         override fun onStartFailure(errorCode: Int) {
-            Log.w(TAG, "LE Advertise Failed: $errorCode")
+            Timber.w("LE Advertise Failed: $errorCode")
         }
-    }
-
-    companion object {
-        private const val TAG = "AdvertisingManager"
     }
 }

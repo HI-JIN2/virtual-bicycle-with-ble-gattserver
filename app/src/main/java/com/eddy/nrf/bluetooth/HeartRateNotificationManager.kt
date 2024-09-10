@@ -2,11 +2,11 @@ package com.eddy.nrf.bluetooth
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.eddy.nrf.presentation.ui.BikeUiState
 import com.eddy.nrf.utils.Util.floatTo4ByteArray
 import com.eddy.nrf.utils.Uuid
 import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 import java.nio.ByteBuffer
 
 class HeartRateNotificationManager(
@@ -44,8 +44,7 @@ class HeartRateNotificationManager(
     private fun notifyHeartRate(heartRate: ByteArray) {
         if (gattServerManager.registeredDevices.isEmpty()) return
 
-        Log.i(
-            TAG,
+        Timber.i(
             "Sending heart rate update to ${gattServerManager.registeredDevices.size} subscribers"
         )
         val heartRateCharacteristic = gattServerManager.bluetoothGattServer
@@ -54,9 +53,5 @@ class HeartRateNotificationManager(
         heartRateCharacteristic?.value = heartRate
 
         gattServerManager.notifyCharacteristicChanged(heartRateCharacteristic!!)
-    }
-
-    companion object {
-        private const val TAG = "HeartRateNotificationManager"
     }
 }

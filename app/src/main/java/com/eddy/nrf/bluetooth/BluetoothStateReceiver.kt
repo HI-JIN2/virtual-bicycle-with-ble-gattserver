@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
+import timber.log.Timber
 
 class BluetoothStateReceiver(
     private val context: Context,
@@ -31,7 +31,7 @@ class BluetoothStateReceiver(
             context.unregisterReceiver(this)
             isReceiverRegistered = false
         } else {
-            Log.w("TAG", "Receiver was not registered")
+            Timber.w("Receiver was not registered")
         }
     }
 
