@@ -42,7 +42,7 @@ import java.time.LocalTime
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BikeScreen(
-    bikeViewModel: BikeViewModel = viewModel()
+    bikeViewModel: BikeViewModel
 ) {
 
     val bikeUiState by bikeViewModel.uiState.collectAsState()
@@ -128,14 +128,14 @@ fun realTimeClock(): String {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(
-    showBackground = true, widthDp = 700,
-    heightDp = 360
-)
-@Composable
-fun BikePreview() {
-    NRFTheme {
-        BikeScreen()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(
+//    showBackground = true, widthDp = 700,
+//    heightDp = 360
+//)
+//@Composable
+//fun BikePreview() {
+//    NRFTheme {
+//        BikeScreen()
+//    }
+//}

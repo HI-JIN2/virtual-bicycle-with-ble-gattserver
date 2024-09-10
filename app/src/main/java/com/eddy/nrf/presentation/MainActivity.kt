@@ -11,12 +11,17 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import com.eddy.nrf.bluetooth.BluetoothServiceManager
 import com.eddy.nrf.presentation.ui.BikeScreen
+import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val bikeViewModel: BikeViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.O)
     private lateinit var bluetoothServiceManager: BluetoothServiceManager
 
@@ -32,7 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NRFTheme {
                 // A surface container using the 'background' color from the theme
-                BikeScreen()
+                BikeScreen(bikeViewModel)
             }
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
