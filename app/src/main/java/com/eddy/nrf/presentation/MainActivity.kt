@@ -13,7 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import com.eddy.nrf.bluetooth.BluetoothServiceManager
+import com.eddy.nrf.bluetooth.BluetoothService
 import com.eddy.nrf.presentation.ui.BikeScreen
 import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
     private val bikeViewModel: BikeViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private lateinit var bluetoothServiceManager: BluetoothServiceManager
+    private lateinit var bluetoothService: BluetoothService
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,8 +31,8 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         checkPermission()
 
-        bluetoothServiceManager = BluetoothServiceManager( this)
-        bluetoothServiceManager.initializeBluetooth()
+        bluetoothService = BluetoothService( this, bikeViewModel)
+        bluetoothService.initializeBluetooth()
 
         setContent {
             NRFTheme {
@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
 
 //        bluetoothServiceManager.cleanup()
     }
+
     private fun checkPermission() {
         // 런타임 권한 확인
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private fun requestBlePermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requestPermissions(

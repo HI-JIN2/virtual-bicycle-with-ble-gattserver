@@ -20,8 +20,8 @@ object Util {
         return buffer.array()
     }
 
-    fun floatToByteArray(value: Float): ByteArray {
-        val bytes = ByteArray(4)
+    fun floatToByteArray(value: Float, size:Int): ByteArray {
+        val bytes = ByteArray(size)
         ByteBuffer.wrap(bytes).putFloat(value)
         return bytes.reversedArray()
     }

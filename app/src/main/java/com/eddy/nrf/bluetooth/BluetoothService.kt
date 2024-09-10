@@ -20,6 +20,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.ParcelUuid
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.eddy.nrf.presentation.ui.BikeUiState
 import com.eddy.nrf.presentation.ui.BikeViewModel
 import com.eddy.nrf.utils.Util.byteArrayToHexArray
 import com.eddy.nrf.utils.Util.floatToByteArray
@@ -28,9 +31,9 @@ import java.nio.ByteBuffer
 import java.util.Arrays
 
 
-class BluetoothServiceManager(
-//    private val viewModel: BikeViewModel,
+class BluetoothService(
     private val context: Context,
+    private val bikeViewModel: BikeViewModel,
 ) {
 
     private val bluetoothManager: BluetoothManager =
@@ -42,9 +45,11 @@ class BluetoothServiceManager(
     private val heartRateNotificationHandler = android.os.Handler()
 
     //    private val heartRateHandler = Handler()
-    private var distance: Float = 15F
-    private var speed: Float = 20F
-    private var gear: Byte = 1
+//    private var distance: Float = 15F
+//    private var speed: Float = 20F
+//    private var gear: Byte = 1
+
+//    val bikeUiState by bikeViewModel.uiState.value
 
 
     @SuppressLint("MissingPermission")
@@ -66,8 +71,6 @@ class BluetoothServiceManager(
             heartRateNotificationHandler.post(heartRateRunnable)
         }
     }
-
-
 
 
     @SuppressLint("MissingPermission")
@@ -192,10 +195,11 @@ class BluetoothServiceManager(
 
             Log.d(TAG, Arrays.toString(value))
 
-            val resultArray = value?.let { byteArrayToHexArray(it) }
-            gear = resultArray?.get(0)?.toByte() ?: 1
+            //Todo 기어 받아오기
 
-
+//            val resultArray = value?.let { byteArrayToHexArray(it) }
+//            gear = resultArray?.get(0)?.toByte() ?: 1
+//
 //            updateUi(gear.toFloat())
 
             if (responseNeeded) {
@@ -342,24 +346,40 @@ class BluetoothServiceManager(
     }
 
     private val heartRateRunnable = object : Runnable {
+        //Todo notify 여기서
+
+        val data = bikeViewModel.uiState.value
+
         override fun run() {
 
-            val buffer = ByteBuffer.allocate(9)
-            buffer.put(floatToByteArray(distance))
-            buffer.put(floatToByteArray(speed))
-            buffer.put(gear)
-            val resultArray = buffer.array()
+//            val buffer = ByteBuffer.allocate(9)
+//            buffer.put(floatToByteArray(data.distance,4))
+//            buffer.put(floatToByteArray(data.speed,4))
+//            buffer.put(floatToByteArray(data.gear,1))
+//            val resultArray = buffer.array()
 
-            Log.d(TAG, "거리+속도+기어 : ${byteArrayToHexArray(resultArray).joinToString(" ")}")
 
-            notifyHeartRate(resultArray)
+            val byteArray =             bikeViewModel.getUiState()
+
+//            bikeViewModel.getUiState()
+            Log.d(
+                TAG, "거리+속도+기어 : ${
+                    byteArrayToHexArray(
+                        byteArray
+                    ).joinToString(" ")
+                }"
+            )
+
+            notifyHeartRate(
+                byteArray
+            )
             heartRateNotificationHandler.postDelayed(this, 1000)
         }
     }
-//
-//    fun updateUi(gear: Float) {
-//        viewModel.onBluetoothDataReceived(gear)
-//    }
+
+    fun updateUi(gear: Float) {
+        bikeViewModel.onBluetoothDataReceived(gear)
+    }
 
     companion object {
         val TAG = "BluetoothServiceManager"
