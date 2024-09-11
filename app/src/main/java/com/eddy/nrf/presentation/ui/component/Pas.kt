@@ -17,12 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.presentation.ui.BikeViewModel
+import timber.log.Timber
 
 @Preview(showBackground = true)
 @Composable
 fun Pas(
     modifier: Modifier = Modifier,
-    select: Float = 0f,
+    select: Float = 3f,
     onSelect: (Int) -> Unit = {},// 선택 콜백,
     viewModel: BikeViewModel = BikeViewModel()
 ) {
@@ -36,16 +37,21 @@ fun Pas(
                 .align(Alignment.Start)
                 .padding(5.dp)  // 왼쪽 정렬
         )
-        repeat(3) { index ->
+        repeat(4) { index ->
+            //인덱스는 위에서 아래로, 하지만 파스는 아래부터
+            //기어가 3일시에 인덱스는 맨위칸임 그래서 3을 뺌
+            val pas = 3 - index
+            val color = getColorByPas(pas)
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (index == select.toInt()) {
+                if (pas == select.toInt()) {
                     Box(
                         modifier = Modifier
                             .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
-                            .background(Color.Gray)
+                            .background(color)
                             .clickable {
-                                Log.d("TAG", "Pas: $index")
+                                Timber.d("Pas: $index")
 //                                viewModel.uiState.value.gear = index.toFloat()
                             }
                     )
@@ -77,4 +83,15 @@ fun Pas(
                 .padding(10.dp), // 왼쪽 정렬
         )
     }
+}
+
+fun getColorByPas(pas: Int): Color {
+    val color = when (pas) {
+        0 -> Color.Green
+        1 -> Color.Yellow
+        2 -> Color.Magenta
+        3 -> Color.Red
+        else -> Color.Gray // 기본값 설정 (필요에 맞게 설정)
+    }
+    return color
 }

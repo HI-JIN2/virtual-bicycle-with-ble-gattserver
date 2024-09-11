@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,11 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
+import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 import kotlinx.coroutines.delay
 import java.time.LocalTime
@@ -39,7 +42,7 @@ import java.time.LocalTime
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BikeScreen(
-    bikeViewModel: BikeViewModel
+    bikeViewModel: BikeViewModel = BikeViewModel()
 ) {
 
     val bikeUiState by bikeViewModel.uiState.collectAsState()
@@ -54,7 +57,6 @@ fun BikeScreen(
                 .weight(1f)  // 남은 공간을 모두 차지
                 .fillMaxWidth()  // 너비는 부모의 너비로 채움
                 .background(Primary)
-                .padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -62,20 +64,35 @@ fun BikeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                AnimatedImage()
-
-                Speed(200.dp, bikeUiState.speed)
-
-                Pas(
-                    modifier = Modifier.padding(end = 10.dp),
-                    select = bikeUiState.gear,
-//                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
-                    onSelect = { newIndex ->
-//                        selected = newIndex
-                        bikeViewModel.changeGear(newIndex.toFloat())
-                    },
-                    viewModel = bikeViewModel
+                AnimatedImage(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Speed(
+                        modifier = Modifier.size(300.dp),
+                        speed = bikeUiState.speed
+                    )
+
+                    Pas(
+                        modifier = Modifier.padding(end = 10.dp),
+                        select = bikeUiState.gear,
+//                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
+                        onSelect = { newIndex ->
+//                        selected = newIndex
+                            bikeViewModel.changeGear(newIndex.toFloat())
+                        },
+                        viewModel = bikeViewModel
+                    )
+                }
+
+
             }
         }
         Box(
@@ -132,14 +149,14 @@ fun realTimeClock(): String {
 }
 
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview(
-//    showBackground = true, widthDp = 700,
-//    heightDp = 360
-//)
-//@Composable
-//fun BikePreview() {
-//    NRFTheme {
-//        BikeScreen()
-//    }
-//}
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(
+    showBackground = true, widthDp = 1600,
+    heightDp = 1000
+)
+@Composable
+fun BikePreview() {
+    NRFTheme {
+        BikeScreen()
+    }
+}
