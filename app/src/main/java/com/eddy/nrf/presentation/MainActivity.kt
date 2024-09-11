@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         checkPermission()
 
-        bluetoothService = BluetoothService(this, bikeViewModel, bikeViewModel.uiState)
+        bluetoothService = BluetoothService(this, bikeViewModel)
         bluetoothService.initializeBluetooth()
 
         setContent {
@@ -49,15 +49,15 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
 
-        //Todo 안해도 될까???
-//        bluetoothServiceManager.cleanup()
+        //이거 빼먹으면 안됨
+        bluetoothService.cleanup()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDestroy() {
         super.onDestroy()
 
-//        bluetoothServiceManager.cleanup()
+        bluetoothService.cleanup()
     }
 
     private fun checkPermission() {
