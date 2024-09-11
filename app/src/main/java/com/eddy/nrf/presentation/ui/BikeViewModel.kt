@@ -54,4 +54,17 @@ class BikeViewModel : ViewModel() {
             Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
         }
     }
+
+    fun changeTargetBattery(battery: Float) {
+        viewModelScope.launch {
+            val afterBattery = Util.calculateBattery(uiState.value.battery, battery)
+
+            _uiState.update {
+                it.copy(
+                    battery = afterBattery,
+                )
+            }
+
+        }
+    }
 }

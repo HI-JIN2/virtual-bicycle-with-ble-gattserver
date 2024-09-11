@@ -81,7 +81,7 @@ fun VerticalSlider(
                     placeable.place(-placeable.width, 0)
                 }
             }
-            .width(300.dp) // 슬라이더의 너비 (세로 방향으로 표시될 때의 높이)
+            .width(150.dp) // 슬라이더의 너비 (세로 방향으로 표시될 때의 높이)
             .fillMaxHeight(),
         track = { sliderState ->
             CustomTrack(

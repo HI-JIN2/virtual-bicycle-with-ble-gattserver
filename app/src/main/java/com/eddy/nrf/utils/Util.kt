@@ -39,6 +39,6 @@ object Util {
     }
 
     fun calculateBattery(currentBattery: Float, targetBattery: Float): Float {
-        return (currentBattery + (currentBattery - currentBattery) * 0.2).toFloat()
+        return (currentBattery + (targetBattery - currentBattery) * 0.2).toFloat()
     }
 }

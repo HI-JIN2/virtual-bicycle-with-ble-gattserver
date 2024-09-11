@@ -52,7 +52,8 @@ fun BikeScreen(
 
     var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
     var currentValue by remember { mutableFloatStateOf(0f) }
-    var value by remember { mutableStateOf(0f) }
+    var proportionalFactor by remember { mutableStateOf(0f) }
+    var targetBatteryValue by remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
@@ -73,28 +74,54 @@ fun BikeScreen(
                         .weight(1f)
 //                        .fillMaxHeight()
                 )
-                Column(
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .size(500.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Column {
 
-                ) {
+
+                    //비례값 조정
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .size(100.dp, 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                        horizontalAlignment = Alignment.CenterHorizontally
+
+                    ) {
 //                    Text("거리"+bikeUiState.distance.toString())
-                    Text("속도" + bikeUiState.speed.toString())
+                        VerticalSlider(
+                            modifier = Modifier.size(20.dp, 5.dp),
+                            value = proportionalFactor,
+                            onValueChange = {
+                                proportionalFactor = it
+                                bikeViewModel.changeSpeed(it)
+                            },
+                            valueRange = 0f..1.5f,
+                            steps = 2,
+                        )
+                        Text(text = "비례값\n$proportionalFactor")
+                    }
+                    //배터리 조정
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .size(100.dp, 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                        horizontalAlignment = Alignment.CenterHorizontally
 
-                    VerticalSlider(
-                        modifier = Modifier.size(20.dp, 10.dp),
-                        value = value,
-                        onValueChange = {
-                            value = it
-                            bikeViewModel.changeSpeed(it)
-                        },
-                        valueRange = 0f..1.5f,
-                        steps = 2,
-                    )
-                    Text(text = "비례값\n$value")
+                    ) {
+//                    Text("거리"+bikeUiState.distance.toString())
+
+                        VerticalSlider(
+                            modifier = Modifier.size(20.dp, 10.dp),
+                            value = targetBatteryValue,
+                            onValueChange = {
+                                targetBatteryValue = it
+                                bikeViewModel.changeTargetBattery(it)
+                            },
+                            valueRange = 0f..100.0F,
+                            steps = 10,
+                        )
+                        Text(text = "배터리 목표값\n$targetBatteryValue")
+                    }
                 }
                 Column(
                     modifier = Modifier
@@ -129,9 +156,6 @@ fun BikeScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
-
-                        //Odometer 적산거리계(총주행 거리계)?
-                        Text(text = "ODO", color = Color.White)
 
                         Pas( //todo 글씨 색 수정
                             modifier = Modifier.padding(end = 10.dp),
