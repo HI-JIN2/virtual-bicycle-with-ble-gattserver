@@ -3,7 +3,6 @@ package com.eddy.nrf.bluetooth
 import android.os.Handler
 import android.os.Looper
 import com.eddy.nrf.presentation.ui.BikeUiState
-import com.eddy.nrf.utils.Util.IntTo4ByteArray
 import com.eddy.nrf.utils.Util.floatTo4ByteArray
 import com.eddy.nrf.utils.Uuid
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +35,7 @@ class HeartRateNotificationManager(
             buffer.put(floatTo4ByteArray(distance))
             buffer.put(floatTo4ByteArray(speed))
             buffer.put(gear.toByte())
-            buffer.put(IntTo4ByteArray(battery))
+            buffer.put(floatTo4ByteArray(battery))
             val resultArray = buffer.array()
 
             notifyHeartRate(resultArray)

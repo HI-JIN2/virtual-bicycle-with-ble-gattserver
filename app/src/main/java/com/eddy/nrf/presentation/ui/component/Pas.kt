@@ -64,7 +64,7 @@ fun Pas(
                         modifier = Modifier
                             .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
-                            .background(Color.White)
+                            .background(Color.Gray)
                             .clickable {
 //                                onSelect(index)
                                 Log.d("TAG", "Pas:selected $index")
