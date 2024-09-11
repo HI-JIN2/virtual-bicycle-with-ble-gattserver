@@ -23,7 +23,7 @@ import timber.log.Timber
 @Composable
 fun Pas(
     modifier: Modifier = Modifier,
-    select: Float = 3f,
+    select: Int = 3,
     onSelect: (Int) -> Unit = {},// 선택 콜백,
     viewModel: BikeViewModel = BikeViewModel()
 ) {

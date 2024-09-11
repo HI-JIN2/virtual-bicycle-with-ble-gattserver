@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
+import com.eddy.nrf.presentation.ui.component.VerticalSlider
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 import kotlinx.coroutines.delay
@@ -46,9 +48,11 @@ fun BikeScreen(
     bikeViewModel: BikeViewModel = BikeViewModel()
 ) {
 
-    val bikeUiState by bikeViewModel.uiState.collectAsState()
+    val bikeUiState by bikeViewModel.uiState.collectAsState() //이걸로해야 값을 계속 관찰할 수 있음~
 
     var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
+    var currentValue by remember { mutableFloatStateOf(0f) }
+    var value by remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
@@ -71,6 +75,29 @@ fun BikeScreen(
                 )
                 Column(
                     modifier = Modifier
+                        .padding(20.dp)
+                        .size(500.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+//                    Text("거리"+bikeUiState.distance.toString())
+                    Text("속도" + bikeUiState.speed.toString())
+
+                    VerticalSlider(
+                        modifier = Modifier.size(20.dp, 10.dp),
+                        value = value,
+                        onValueChange = {
+                            value = it
+                            bikeViewModel.changeSpeed(it)
+                        },
+                        valueRange = 0f..1.5f,
+                        steps = 2,
+                    )
+                    Text(text = "비례값\n$value")
+                }
+                Column(
+                    modifier = Modifier
                         .background(Color.Black)
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
@@ -82,7 +109,7 @@ fun BikeScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
-                        Text(text = "100%", color = Color.White)
+                        Text(text = bikeUiState.battery.toString() + "%", color = Color.White)
                         Image(
                             painter = painterResource(id = R.drawable.img_battery),  // 리소스 이미지 사용
                             contentDescription = "Example Image",
@@ -112,7 +139,7 @@ fun BikeScreen(
 //                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
                             onSelect = { newIndex ->
 //                        selected = newIndex
-                                bikeViewModel.changeGear(newIndex.toFloat())
+                                bikeViewModel.changeGear(newIndex)
                             },
                             viewModel = bikeViewModel
                         )

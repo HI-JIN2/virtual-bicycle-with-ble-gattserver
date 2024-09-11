@@ -110,7 +110,7 @@ class GattServerManager(
             val resultArray = value?.let { byteArrayToHexArray(it) }
             val newGear = resultArray?.get(0)?.toByte() ?: 1
 
-            bikeViewModel.changeGear(newGear.toFloat())
+            bikeViewModel.changeGear(newGear.toInt())
             Timber.i("Gear value changed to: $newGear")
 
             if (responseNeeded) {
