@@ -40,4 +40,18 @@ class BikeViewModel : ViewModel() {
             Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
         }
     }
+
+    fun changeSpeed(gear: Int) {
+        viewModelScope.launch {
+            val afterSpeed =
+                Util.calculateSpeed(uiState.value.speed, gear, uiState.value.proportionalFactor)
+
+            _uiState.update {
+                it.copy(
+                    speed = afterSpeed,
+                )
+            }
+            Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
+        }
+    }
 }
