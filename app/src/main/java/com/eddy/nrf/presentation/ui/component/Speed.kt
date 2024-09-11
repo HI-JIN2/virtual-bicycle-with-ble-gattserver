@@ -1,9 +1,9 @@
 package com.eddy.nrf.presentation.ui.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,14 +23,14 @@ import com.eddy.nrf.presentation.ui.theme.StartColor
 
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
-fun Speed(size: Dp = 200.dp, speed: Float = 22.5f) {
+fun Speed(modifier: Modifier = Modifier, speed: Float = 22.5f) {
     Box(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape),
+        modifier = modifier
+            .clip(CircleShape)
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        GradientStrokeCircle(modifier = Modifier.size(size))
+        GradientStrokeCircle(modifier = modifier)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Speed")
             Text(speed.toString(), style = MaterialTheme.typography.headlineMedium)
@@ -43,7 +43,7 @@ fun Speed(size: Dp = 200.dp, speed: Float = 22.5f) {
 fun GradientStrokeCircle(
     modifier: Modifier = Modifier,
     colors: List<Color> = listOf(StartColor, EndColor), //여기가 바뀌면 안나옴
-    strokeWidth: Dp = 4.dp
+    strokeWidth: Dp = 10.dp
 ) {
     Canvas(modifier = modifier) {
         val canvasWidth = size.width

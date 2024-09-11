@@ -54,7 +54,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onDestroy() {
+    override fun onDestroy() { //Todo onDestroy 전에 무조건 onStop을 거침 그러면 여기서는 클린업을 안해줘도 되는것 아닌가?
+        //재미있는 사실은 우선순위가 더 높은 앱이 메모리가 필요하다면 앱은 언제든지 종료될 수 있다.
+        // 그렇게 때문에 onStop, onDestroy 메서드는 반드시 실행된다는 보장이 없다.
         super.onDestroy()
 
         bluetoothService.cleanup()
