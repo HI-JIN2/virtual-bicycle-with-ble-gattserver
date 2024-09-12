@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.eddy.nrf.presentation.ui.theme.Gray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,14 +82,14 @@ fun VerticalSlider(
                     placeable.place(-placeable.width, 0)
                 }
             }
-            .width(150.dp) // 슬라이더의 너비 (세로 방향으로 표시될 때의 높이)
+            .width(160.dp) // 슬라이더의 너비 (세로 방향으로 표시될 때의 높이)
             .fillMaxHeight(),
         track = { sliderState ->
             CustomTrack(
                 colors = colors.copy(
                     thumbColor = Color.Red, // 네모난 Thumb의 색상
                     activeTrackColor = Color.Blue,
-                    inactiveTrackColor = Color.LightGray
+                    inactiveTrackColor = Gray
                 ),
                 enabled = enabled,
                 sliderState = sliderState

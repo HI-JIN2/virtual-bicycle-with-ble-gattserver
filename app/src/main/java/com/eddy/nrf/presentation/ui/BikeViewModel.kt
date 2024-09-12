@@ -62,48 +62,26 @@ class BikeViewModel : ViewModel() {
         _uiState.update {
             it.copy(battery = newBattery)
         }
-        Timber.d("속도가 업데이트되었습니다: $newBattery")
+        Timber.d("배터리가 업데이트되었습니다: $newBattery")
     }
-
-
-//    fun changeGear(gear: Int) {
-//        viewModelScope.launch {
-//            _uiState.update {
-//                it.copy(
-//                    gear = gear
-//                )
-//            }
-//            //여긴 잘 바뀜
-//            Timber.d("기어값이 바뀌었습니다. : $gear   ${uiState.value.gear}")
-//        }
-//    }
 
     fun changeProportionalFactor(proportionalFactor: Float) {
         viewModelScope.launch {
-//            val afterSpeed =
-//                Util.calculateSpeed(uiState.value.speed, uiState.value.gear, proportionalFactor)
-
             _uiState.update {
                 it.copy(
-//                    speed = afterSpeed,
                     proportionalFactor = proportionalFactor
                 )
             }
-//            Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
         }
     }
 
     fun changeGear(gear: Int) {
         viewModelScope.launch {
-//            val afterSpeed =
-//                Util.calculateSpeed(uiState.value.speed, gear, uiState.value.proportionalFactor)
-
             _uiState.update {
                 it.copy(
                     gear = gear,
                 )
             }
-            Timber.d("속도값이 바뀌었습니다. : $gear   ${uiState.value.gear}")
         }
     }
 

@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -34,6 +37,7 @@ import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.component.VerticalSlider
+import com.eddy.nrf.presentation.ui.theme.DarkPrimary
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 import com.eddy.nrf.presentation.ui.theme.Typography
@@ -91,11 +95,28 @@ fun BikeScreen(
                             valueRange = 0f..1.5f,
 //                            steps = 2, //간격 없음!
                         )
-                        Text(
-                            text = "비례값\n${String.format("%.1f", proportionalFactorSliderValue)}",
-                            style = Typography.bodySmall,
-                            textAlign = TextAlign.Center
-                        )
+
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(DarkPrimary)
+                                .size(100.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .aspectRatio(1f)
+                                .padding(10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "비례값\n${
+                                    String.format(
+                                        "%.1f",
+                                        proportionalFactorSliderValue
+                                    )
+                                }",
+                                color = Color.White,
+                                style = Typography.bodySmall,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
 
                     //배터리 조정
@@ -116,10 +137,27 @@ fun BikeScreen(
                             },
                             valueRange = 0f..100.0F,
                         )
-                        Text(
-                            text = "배터리 목표값\n${String.format("%.1f", targetBatterySliderValue)}",
-                            style = Typography.bodySmall, textAlign = TextAlign.Center
-                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(DarkPrimary)
+                                .size(100.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .aspectRatio(1f)
+                                .padding(10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "배터리 목표값\n${
+                                    String.format(
+                                        "%.1f",
+                                        targetBatterySliderValue
+                                    )
+                                }",
+                                style = Typography.bodySmall,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
                 Column(
@@ -136,7 +174,7 @@ fun BikeScreen(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
                         Text(
-                            text = String.format("%.1f", bikeUiState.battery) + "%",
+                            text = String.format("%.0f", bikeUiState.battery) + "%",
                             color = Color.White,
                             style = Typography.bodyMedium,
                         )
@@ -146,7 +184,8 @@ fun BikeScreen(
                             colorFilter = ColorFilter.tint(
                                 Color.White,
                                 BlendMode.SrcIn
-                            ) // 색상 및 혼합 모드 설정
+                            ), // 색상 및 혼합 모드 설정
+                            modifier = Modifier.size(70.dp)
                         )
                     }
 
@@ -156,8 +195,13 @@ fun BikeScreen(
                     )
 
                     Text(
-                        text = "ODO " + bikeUiState.distance.toString() + "km", color = Color.White,
-                        style = Typography.bodyMedium
+                        text = "ODO  " + bikeUiState.distance.toString() + "km",
+                        color = Color.White,
+                        style = Typography.bodyMedium,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(Primary)
+                            .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
                     )
 
                     Pas( //todo 글씨 색 수정

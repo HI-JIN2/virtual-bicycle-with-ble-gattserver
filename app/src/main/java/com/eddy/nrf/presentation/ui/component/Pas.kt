@@ -17,8 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.presentation.ui.BikeViewModel
+import com.eddy.nrf.presentation.ui.theme.Gray
+import com.eddy.nrf.presentation.ui.theme.Green
 import com.eddy.nrf.presentation.ui.theme.Orange
 import com.eddy.nrf.presentation.ui.theme.Typography
+import com.eddy.nrf.presentation.ui.theme.Yellow
 import timber.log.Timber
 
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
@@ -34,7 +37,7 @@ fun Pas(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "PAS",
+            "PAS  $select",
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(5.dp), color = Color.White  // 왼쪽 정렬
@@ -77,24 +80,16 @@ fun Pas(
                 }
             }
         }
-        Text(
-            select.toString(),
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(10.dp), color = Color.White // 왼쪽 정렬,
-            , style = Typography.bodyMedium
-
-        )
     }
 }
 
 fun getColorByPas(pas: Int): Color {
     val color = when (pas) {
-        0 -> Color.Green
-        1 -> Color.Yellow
+        0 -> Green
+        1 -> Yellow
         2 -> Orange
         3 -> Color.Red
-        else -> Color.Gray // 기본값 설정 (필요에 맞게 설정)
+        else -> Gray // 기본값 설정 (필요에 맞게 설정)
     }
     return color
 }
