@@ -39,7 +39,6 @@ fun Pas(
         Text(
             "PAS  $select",
             modifier = Modifier
-                .align(Alignment.Start)
                 .padding(5.dp), color = Color.White  // 왼쪽 정렬
             , style = Typography.bodyMedium
         )

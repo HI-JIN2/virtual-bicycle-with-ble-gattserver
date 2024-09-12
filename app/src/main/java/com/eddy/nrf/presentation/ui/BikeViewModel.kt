@@ -19,6 +19,7 @@ class BikeViewModel : ViewModel() {
     init {
         startSpeedUpdate()
         startBatteryUpdate()
+        startDistanceUpdate()
     }
 
 
@@ -63,6 +64,27 @@ class BikeViewModel : ViewModel() {
             it.copy(battery = newBattery)
         }
         Timber.d("배터리가 업데이트되었습니다: $newBattery")
+    }
+
+    private fun startDistanceUpdate() {
+        viewModelScope.launch {
+            while (true) {
+                updateDistance()
+                delay(1000) // 1초 대기
+            }
+        }
+    }
+
+    private fun updateDistance() {
+        val currentState = uiState.value
+        val odo = Util.calculateBattery(
+            currentState.distance,
+            currentState.speed,
+        )
+        _uiState.update {
+            it.copy(distance = odo)
+        }
+        Timber.d("거리가 업데이트되었습니다: $odo")
     }
 
     fun changeProportionalFactor(proportionalFactor: Float) {

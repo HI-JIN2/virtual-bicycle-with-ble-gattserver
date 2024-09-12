@@ -41,4 +41,9 @@ object Util {
     fun calculateBattery(currentBattery: Float, targetBattery: Float): Float {
         return (currentBattery + (targetBattery - currentBattery) * 0.2).toFloat()
     }
+
+    fun calculateOdo(currentDistance: Float, currentSpeed: Float): Float {
+        val newDistance = currentSpeed / 3600
+        return currentDistance + newDistance
+    }
 }

@@ -204,15 +204,18 @@ fun BikeScreen(
                         speed = bikeUiState.speed
                     )
 
-                    Text(
-                        text = "ODO  " + bikeUiState.distance.toString() + "km",
-                        color = Color.White,
-                        style = Typography.bodyMedium,
+                    Box(
                         modifier = Modifier
                             .clip(CircleShape)
                             .background(Primary)
                             .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
-                    )
+                    ) {
+                        Text(
+                            text = "ODO  " + String.format("%.2f", bikeUiState.distance) + "km",
+                            color = Color.White,
+                            style = Typography.bodyMedium,
+                        )
+                    }
 
                     Pas( //todo 글씨 색 수정
                         modifier = Modifier.padding(end = 10.dp),
