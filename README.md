@@ -44,25 +44,12 @@ com.eddy.nrf
 | Timber | 로그 관리를 위한 라이브러리. 더 간결하고 유연한 로깅을 제공 |
 
 ## Architecture
-[compose - viewmodel](https://developer.android.com/codelabs/basic-android-kotlin-compose-viewmodel-and-state?hl=ko#4)
+### 안드로이드 권장 앱 아키텍쳐 
+
+- View와 ViewModel의 구조로 관심사 분리를 합니다.
+- UI -> **event** -> ViewModel
+- ViewModel -> uiState -> UI
 
 <img width="507" alt="image" src="https://github.com/user-attachments/assets/1efb3af7-4310-4f0f-85ac-466fcfc98218">
-<img width="386" alt="스크린샷 2024-09-10 오전 9 24 05" src="https://github.com/user-attachments/assets/3dbd62fc-037a-4427-a117-fa93dde0e008">
 
-<img width="668" alt="스크린샷 2024-09-10 오전 9 23 48" src="https://github.com/user-attachments/assets/069f5c21-196d-4edf-982e-b0c640393516">
-
-## trouble shooting
-```
-error 133 (0x85) gatt error
-```
-- 크기가 큼
-
-```
-error 3 (0x3) gatt write not permit
-```
-- 상수 잘 보기, XXX_WRITE와 XXX_WRITE
-
-
-## 깨알 상식
-- 블루투스는 1:1 연결이다.
-- 가상 기기는 블루투스가 없다. 
+참고: [ViewModel and State in Compose](https://developer.android.com/codelabs/basic-android-kotlin-compose-viewmodel-and-state?hl=ko#4)
