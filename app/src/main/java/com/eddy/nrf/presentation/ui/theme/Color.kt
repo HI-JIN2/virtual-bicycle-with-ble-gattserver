@@ -16,3 +16,4 @@ val StartColor = Color(0xFFA3D7EF)
 val EndColor = Color(0xFF213D69)
 
 val Gray = Color(0xFF6E6E6E)
+val Orange = Color(0xFFFF7F00)

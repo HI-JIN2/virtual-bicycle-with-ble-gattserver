@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.presentation.ui.BikeViewModel
+import com.eddy.nrf.presentation.ui.theme.Orange
 import com.eddy.nrf.presentation.ui.theme.Typography
 import timber.log.Timber
 
@@ -91,7 +92,7 @@ fun getColorByPas(pas: Int): Color {
     val color = when (pas) {
         0 -> Color.Green
         1 -> Color.Yellow
-        2 -> Color.Magenta
+        2 -> Orange
         3 -> Color.Red
         else -> Color.Gray // 기본값 설정 (필요에 맞게 설정)
     }
