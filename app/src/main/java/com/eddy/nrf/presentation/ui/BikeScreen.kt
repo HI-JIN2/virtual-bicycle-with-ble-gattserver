@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +77,9 @@ fun BikeScreen(
                         .weight(1f),
                     speed = 1f //Todo 기본 속도로 되어있음
                 )
-                Column {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
+                ) {
                     //비례값 조정
                     Column(
                         modifier = Modifier
@@ -175,7 +179,9 @@ fun BikeScreen(
                         .background(Color.Black)
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
-                        .padding(20.dp),
+                        .padding(20.dp)
+                        .verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
+                    ,
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
