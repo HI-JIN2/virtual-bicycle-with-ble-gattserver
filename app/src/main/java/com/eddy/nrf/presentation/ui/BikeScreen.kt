@@ -92,7 +92,7 @@ fun BikeScreen(
 //                            steps = 2, //간격 없음!
                         )
                         Text(
-                            text = "비례값\n$proportionalFactorSliderValue",
+                            text = "비례값\n${String.format("%.1f", proportionalFactorSliderValue)}",
                             style = Typography.bodySmall,
                             textAlign = TextAlign.Center
                         )
@@ -117,7 +117,7 @@ fun BikeScreen(
                             valueRange = 0f..100.0F,
                         )
                         Text(
-                            text = "배터리 목표값\n$targetBatterySliderValue",
+                            text = "배터리 목표값\n${String.format("%.1f", targetBatterySliderValue)}",
                             style = Typography.bodySmall, textAlign = TextAlign.Center
                         )
                     }
@@ -136,7 +136,8 @@ fun BikeScreen(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
                         Text(
-                            text = bikeUiState.battery.toString() + "%", color = Color.White,
+                            text = String.format("%.1f", bikeUiState.battery) + "%",
+                            color = Color.White,
                             style = Typography.bodyMedium,
                         )
                         Image(
