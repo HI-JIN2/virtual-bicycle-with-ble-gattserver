@@ -2,6 +2,7 @@
 
 > BLE(Bluetooth Low Energy)를 사용해서 스마트폰을 이용한 가상 자전거 만들기 toy project
 - 스마트폰을 Bluetooth Server로 만들어 센서의 역할을 하게 한다.
+![Frame 5](https://github.com/user-attachments/assets/d80b16a4-7146-49cf-aa63-deb86b392aca)
 
 ## 기기
 
