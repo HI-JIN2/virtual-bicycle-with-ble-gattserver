@@ -80,7 +80,7 @@ fun BikeScreen(
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 300.dp),
+                            .size(100.dp, 330.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -100,30 +100,35 @@ fun BikeScreen(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(DarkPrimary)
-                                .size(100.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .size(70.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
                                 .aspectRatio(1f)
                                 .padding(10.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "비례값\n${
-                                    String.format(
-                                        "%.1f",
-                                        proportionalFactorSliderValue
-                                    )
-                                }",
+                                text = "비례값",
                                 color = Color.White,
-                                style = Typography.bodySmall,
+                                style = Typography.displaySmall,
                                 textAlign = TextAlign.Center
                             )
                         }
+                        Text(
+                            text =
+                            String.format(
+                                "%.1f",
+                                proportionalFactorSliderValue
+                            ),
+                            color = Color.White,
+                            style = Typography.bodySmall,
+                            textAlign = TextAlign.Center
+                        )
                     }
 
                     //배터리 조정
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 300.dp),
+                            .size(100.dp, 350.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -141,23 +146,28 @@ fun BikeScreen(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(DarkPrimary)
-                                .size(100.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .size(70.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
                                 .aspectRatio(1f)
-                                .padding(10.dp),
+                                .padding(5.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "배터리 목표값\n${
-                                    String.format(
-                                        "%.1f",
-                                        targetBatterySliderValue
-                                    )
-                                }",
-                                style = Typography.bodySmall,
+                                text = "배터리\n목표값",
+                                style = Typography.displaySmall,
                                 color = Color.White,
                                 textAlign = TextAlign.Center
                             )
                         }
+                        Text(
+                            text =
+                            String.format(
+                                "%.1f",
+                                targetBatterySliderValue
+                            ),
+                            style = Typography.bodySmall,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 Column(

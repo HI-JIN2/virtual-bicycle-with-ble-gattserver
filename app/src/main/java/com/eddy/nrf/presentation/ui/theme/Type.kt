@@ -27,4 +27,9 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
     ),
+    displaySmall = TextStyle(
+        fontFamily = sfPro,
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+    ),
 )
