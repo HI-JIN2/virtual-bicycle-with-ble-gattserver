@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -95,7 +96,8 @@ fun BikeScreen(
                         )
                         Text(
                             text = "비례값\n$proportionalFactorSliderValue",
-                            style = Typography.bodySmall
+                            style = Typography.bodySmall,
+                            textAlign = TextAlign.Center
                         )
                     }
                     //배터리 조정
@@ -120,7 +122,7 @@ fun BikeScreen(
                         )
                         Text(
                             text = "배터리 목표값\n$targetBatterySliderValue",
-                            style = Typography.bodySmall
+                            style = Typography.bodySmall, textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -139,7 +141,7 @@ fun BikeScreen(
                     ) {
                         Text(
                             text = bikeUiState.battery.toString() + "%", color = Color.White,
-                            style = Typography.bodyMedium
+                            style = Typography.bodyMedium,
                         )
                         Image(
                             painter = painterResource(id = R.drawable.img_battery),  // 리소스 이미지 사용
