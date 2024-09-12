@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.eddy.nrf"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -84,4 +84,6 @@ dependencies {
 
     implementation(libs.viewmodel.compose)
     implementation(libs.timber)
+
+    implementation(libs.filled.slider.compose)
 }

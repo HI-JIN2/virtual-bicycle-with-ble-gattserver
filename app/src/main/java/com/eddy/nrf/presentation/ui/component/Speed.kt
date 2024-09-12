@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.presentation.ui.theme.EndColor
 import com.eddy.nrf.presentation.ui.theme.StartColor
+import com.eddy.nrf.presentation.ui.theme.Typography
 
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
@@ -32,9 +32,15 @@ fun Speed(modifier: Modifier = Modifier, speed: Float = 22.5f) {
     ) {
         GradientStrokeCircle(modifier = modifier)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Speed")
-            Text(speed.toString(), style = MaterialTheme.typography.headlineMedium)
-            Text("km/h")
+            Text(
+                "Speed",
+                style = Typography.bodyMedium
+            )
+            Text(
+                speed.toString(),
+                style = Typography.bodyLarge
+            )
+            Text("km/h", style = Typography.bodyMedium)
         }
     }
 }

@@ -17,13 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eddy.nrf.presentation.ui.BikeViewModel
+import com.eddy.nrf.presentation.ui.theme.Typography
 import timber.log.Timber
 
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
 fun Pas(
     modifier: Modifier = Modifier,
-    select: Float = 3f,
+    select: Int = 3,
     onSelect: (Int) -> Unit = {},// 선택 콜백,
     viewModel: BikeViewModel = BikeViewModel()
 ) {
@@ -36,6 +37,7 @@ fun Pas(
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(5.dp), color = Color.White  // 왼쪽 정렬
+            , style = Typography.bodyMedium
         )
         repeat(4) { index ->
             //인덱스는 위에서 아래로, 하지만 파스는 아래부터
@@ -64,7 +66,7 @@ fun Pas(
                         modifier = Modifier
                             .size(width = 40.dp, height = 60.dp)
                             .padding(8.dp)
-                            .background(Color.White)
+                            .background(Color.Gray)
                             .clickable {
 //                                onSelect(index)
                                 Log.d("TAG", "Pas:selected $index")
@@ -80,7 +82,9 @@ fun Pas(
             select.toInt().toString(),
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(10.dp), color = Color.White // 왼쪽 정렬
+                .padding(10.dp), color = Color.White // 왼쪽 정렬,
+            , style = Typography.bodyMedium
+
         )
     }
 }
