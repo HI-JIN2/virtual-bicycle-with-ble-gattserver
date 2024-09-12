@@ -3,6 +3,7 @@ package com.eddy.nrf.presentation.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eddy.nrf.utils.Util
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,33 @@ class BikeViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(BikeUiState())
     val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
+
+    init {
+        startSpeedUpdate()
+    }
+
+    private fun startSpeedUpdate() {
+        viewModelScope.launch {
+            while (true) {
+                updateSpeed()
+                delay(1000) // 1초 대기
+            }
+        }
+    }
+
+    private fun updateSpeed() {
+        val currentState = uiState.value
+        val newSpeed = Util.calculateSpeed(
+            currentState.speed,
+            currentState.gear,
+            currentState.proportionalFactor
+        )
+        _uiState.update {
+            it.copy(speed = newSpeed)
+        }
+        Timber.d("속도가 업데이트되었습니다: $newSpeed")
+    }
+
 
     fun changeGear(gear: Int) {
         viewModelScope.launch {
@@ -64,7 +92,6 @@ class BikeViewModel : ViewModel() {
                     battery = afterBattery,
                 )
             }
-
         }
     }
 }

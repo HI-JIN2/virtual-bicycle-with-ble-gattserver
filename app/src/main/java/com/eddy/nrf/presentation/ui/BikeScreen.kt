@@ -44,7 +44,7 @@ import java.time.LocalTime
 @Composable
 fun BikeScreen(
     bikeViewModel: BikeViewModel = BikeViewModel()
-) {
+) { //uistate를 주입 받는 방법은? 메소드도 파라미터로 넘기고
 
     val bikeUiState by bikeViewModel.uiState.collectAsStateWithLifecycle() //이걸로해야 값을 계속 관찰할 수 있음~
 
@@ -68,12 +68,10 @@ fun BikeScreen(
             ) {
                 AnimatedImage(
                     modifier = Modifier
-                        .weight(1f)
-//                        .fillMaxHeight()
+                        .weight(1f),
+                    speed = 1f //Todo 기본 속도로 되어있음
                 )
                 Column {
-
-
                     //비례값 조정
                     Column(
                         modifier = Modifier
@@ -83,7 +81,6 @@ fun BikeScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-//                    Text("거리"+bikeUiState.distance.toString())
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 5.dp),
                             value = proportionalFactorSliderValue,
@@ -100,6 +97,7 @@ fun BikeScreen(
                             textAlign = TextAlign.Center
                         )
                     }
+
                     //배터리 조정
                     Column(
                         modifier = Modifier
@@ -109,8 +107,6 @@ fun BikeScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-//                    Text("거리"+bikeUiState.distance.toString())
-
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 10.dp),
                             value = targetBatterySliderValue,
@@ -150,7 +146,6 @@ fun BikeScreen(
                                 Color.White,
                                 BlendMode.SrcIn
                             ) // 색상 및 혼합 모드 설정
-
                         )
                     }
 
@@ -180,29 +175,6 @@ fun BikeScreen(
 
             }
         }
-//        Box(
-//            modifier = Modifier
-//                .height(50.dp)  // 고정된 높이 30dp
-//                .fillMaxWidth()  // 너비는 부모의 너비로 채움
-//                .background(Color.White)
-//                .padding(10.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),  // Row가 부모의 너비를 가득 채움
-//                horizontalArrangement = Arrangement.spacedBy(
-//                    150.dp,
-//                    Alignment.CenterHorizontally
-//                ),  // 요소들을 중앙에 정렬하고 16dp 간격 추가
-//                verticalAlignment = Alignment.CenterVertically
-//            )  // 세로 방향으로 중앙 정렬
-//            {
-//                Text(text = realTimeClock(), modifier = Modifier)
-//                Text(text = "ODO")
-//                Text(text = bikeUiState.distance.toString() + "km")
-//
-//
-//            }
-//        }
     }
 }
 

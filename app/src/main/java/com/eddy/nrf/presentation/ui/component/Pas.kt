@@ -46,7 +46,7 @@ fun Pas(
             val color = getColorByPas(pas)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (pas == select.toInt()) {
+                if (pas == select) {
                     Box(
                         modifier = Modifier
                             .size(width = 40.dp, height = 60.dp)
@@ -73,13 +73,11 @@ fun Pas(
                             } // 클릭 이벤트로 선택 변경
                     )
                     Spacer(modifier = Modifier.size(30.dp))
-
                 }
-
             }
         }
         Text(
-            select.toInt().toString(),
+            select.toString(),
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(10.dp), color = Color.White // 왼쪽 정렬,
