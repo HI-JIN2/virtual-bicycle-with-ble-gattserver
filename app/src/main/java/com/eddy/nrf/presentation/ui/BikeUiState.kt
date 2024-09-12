@@ -6,5 +6,6 @@ data class BikeUiState(
     var speed: Float = 0.0f,
     var gear: Int = 0,
     var battery: Float = 100f,
+    var targetBattery: Float = 100f,
     var proportionalFactor: Float = 1.0f
 )

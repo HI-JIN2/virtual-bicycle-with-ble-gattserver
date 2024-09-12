@@ -16,6 +16,9 @@ class AdvertisingManager(private val bluetoothAdapter: BluetoothAdapter) {
 
     @SuppressLint("MissingPermission")
     fun startAdvertising() {
+        // 블루투스 어댑터의 이름을 "trimm e-bike"로 변경
+        bluetoothAdapter.name = "trimm e-bike"
+
         bluetoothLeAdvertiser = bluetoothAdapter.bluetoothLeAdvertiser
 
         bluetoothLeAdvertiser?.let {

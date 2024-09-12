@@ -37,7 +37,8 @@ fun Speed(modifier: Modifier = Modifier, speed: Float = 22.5f) {
                 style = Typography.bodyMedium
             )
             Text(
-                speed.toString(),
+                text =
+                String.format("%.1f", speed),
                 style = Typography.bodyLarge
             )
             Text("km/h", style = Typography.bodyMedium)

@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -34,6 +39,7 @@ import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
 import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.component.VerticalSlider
+import com.eddy.nrf.presentation.ui.theme.DarkPrimary
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
 import com.eddy.nrf.presentation.ui.theme.Typography
@@ -44,7 +50,7 @@ import java.time.LocalTime
 @Composable
 fun BikeScreen(
     bikeViewModel: BikeViewModel = BikeViewModel()
-) {
+) { //uistate를 주입 받는 방법은? 메소드도 파라미터로 넘기고
 
     val bikeUiState by bikeViewModel.uiState.collectAsStateWithLifecycle() //이걸로해야 값을 계속 관찰할 수 있음~
 
@@ -68,49 +74,69 @@ fun BikeScreen(
             ) {
                 AnimatedImage(
                     modifier = Modifier
-                        .weight(1f)
-//                        .fillMaxHeight()
+                        .weight(1f),
+                    speed = 1f //Todo 기본 속도로 되어있음
                 )
-                Column {
-
-
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
+                ) {
                     //비례값 조정
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 300.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                            .size(100.dp, 330.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-//                    Text("거리"+bikeUiState.distance.toString())
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 5.dp),
                             value = proportionalFactorSliderValue,
                             onValueChange = {
                                 proportionalFactorSliderValue = it
-                                bikeViewModel.changeSpeed(it)
+                                bikeViewModel.changeProportionalFactor(it)
                             },
                             valueRange = 0f..1.5f,
 //                            steps = 2, //간격 없음!
                         )
+
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(DarkPrimary)
+                                .size(70.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .aspectRatio(1f)
+                                .padding(10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "비례값",
+                                color = Color.White,
+                                style = Typography.displaySmall,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Text(
-                            text = "비례값\n$proportionalFactorSliderValue",
+                            text =
+                            String.format(
+                                "%.1f",
+                                proportionalFactorSliderValue
+                            ),
+                            color = Color.White,
                             style = Typography.bodySmall,
                             textAlign = TextAlign.Center
                         )
                     }
+
                     //배터리 조정
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 300.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                            .size(100.dp, 350.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-//                    Text("거리"+bikeUiState.distance.toString())
-
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 10.dp),
                             value = targetBatterySliderValue,
@@ -120,9 +146,31 @@ fun BikeScreen(
                             },
                             valueRange = 0f..100.0F,
                         )
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(DarkPrimary)
+                                .size(70.dp) //얘의 부모의 너비가 100이어서 가로가 짤린거임~!!@!!!
+                                .aspectRatio(1f)
+                                .padding(5.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "배터리\n목표값",
+                                style = Typography.displaySmall,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Text(
-                            text = "배터리 목표값\n$targetBatterySliderValue",
-                            style = Typography.bodySmall, textAlign = TextAlign.Center
+                            text =
+                            String.format(
+                                "%.1f",
+                                targetBatterySliderValue
+                            ),
+                            style = Typography.bodySmall,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -131,8 +179,10 @@ fun BikeScreen(
                         .background(Color.Black)
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                        .padding(20.dp)
+                        .verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
+                    ,
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -140,7 +190,8 @@ fun BikeScreen(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
                         Text(
-                            text = bikeUiState.battery.toString() + "%", color = Color.White,
+                            text = String.format("%.0f", bikeUiState.battery) + "%",
+                            color = Color.White,
                             style = Typography.bodyMedium,
                         )
                         Image(
@@ -149,8 +200,8 @@ fun BikeScreen(
                             colorFilter = ColorFilter.tint(
                                 Color.White,
                                 BlendMode.SrcIn
-                            ) // 색상 및 혼합 모드 설정
-
+                            ), // 색상 및 혼합 모드 설정
+                            modifier = Modifier.size(70.dp)
                         )
                     }
 
@@ -159,10 +210,18 @@ fun BikeScreen(
                         speed = bikeUiState.speed
                     )
 
-                    Text(
-                        text = "ODO " + bikeUiState.distance.toString() + "km", color = Color.White,
-                        style = Typography.bodyMedium
-                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(Primary)
+                            .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp),
+                    ) {
+                        Text(
+                            text = "ODO  " + String.format("%.2f", bikeUiState.distance) + "km",
+                            color = Color.White,
+                            style = Typography.bodyMedium,
+                        )
+                    }
 
                     Pas( //todo 글씨 색 수정
                         modifier = Modifier.padding(end = 10.dp),
@@ -180,29 +239,6 @@ fun BikeScreen(
 
             }
         }
-//        Box(
-//            modifier = Modifier
-//                .height(50.dp)  // 고정된 높이 30dp
-//                .fillMaxWidth()  // 너비는 부모의 너비로 채움
-//                .background(Color.White)
-//                .padding(10.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),  // Row가 부모의 너비를 가득 채움
-//                horizontalArrangement = Arrangement.spacedBy(
-//                    150.dp,
-//                    Alignment.CenterHorizontally
-//                ),  // 요소들을 중앙에 정렬하고 16dp 간격 추가
-//                verticalAlignment = Alignment.CenterVertically
-//            )  // 세로 방향으로 중앙 정렬
-//            {
-//                Text(text = realTimeClock(), modifier = Modifier)
-//                Text(text = "ODO")
-//                Text(text = bikeUiState.distance.toString() + "km")
-//
-//
-//            }
-//        }
     }
 }
 

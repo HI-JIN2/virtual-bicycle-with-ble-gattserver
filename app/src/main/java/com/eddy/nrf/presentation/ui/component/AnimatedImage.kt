@@ -15,15 +15,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(showBackground = true)
 @Composable
-fun AnimatedImage(modifier: Modifier = Modifier) {
-
+fun AnimatedImage(
+    modifier: Modifier = Modifier,
+    speed: Float = 1f // 1f는 기본 속도, 2f는 2배 빠르게, 0.5f는 절반 속도
+) {
     val frameCount = 115
-    val frameDuration = 1000 / 24 // 초당 24프레임
+    val baseDuration = 1000 / 24 // 기본 프레임 지속 시간 (초당 24프레임)
     val context = LocalContext.current
 
-    // List of images
+    // 이미지 리스트
     val images = (1..frameCount).map { frameNumber ->
         val formattedFrameNumber = String.format("%03d", frameNumber)
         painterResource(
@@ -42,11 +43,12 @@ fun AnimatedImage(modifier: Modifier = Modifier) {
         typeConverter = Int.VectorConverter,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = frameCount * frameDuration,
+                durationMillis = (frameCount * baseDuration / speed).toInt(),
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
-        ), label = ""
+        ),
+        label = ""
     )
 
     Image(
@@ -54,4 +56,10 @@ fun AnimatedImage(modifier: Modifier = Modifier) {
         contentDescription = null,
         modifier = modifier
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AnimatedImagePreview() {
+    AnimatedImage(speed = 1f)
 }
