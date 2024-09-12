@@ -77,7 +77,7 @@ fun BikeScreen(
                         modifier = Modifier
                             .padding(20.dp)
                             .size(100.dp, 300.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
@@ -86,7 +86,7 @@ fun BikeScreen(
                             value = proportionalFactorSliderValue,
                             onValueChange = {
                                 proportionalFactorSliderValue = it
-                                bikeViewModel.changeSpeed(it)
+                                bikeViewModel.changeProportionalFactor(it)
                             },
                             valueRange = 0f..1.5f,
 //                            steps = 2, //간격 없음!
@@ -103,7 +103,7 @@ fun BikeScreen(
                         modifier = Modifier
                             .padding(20.dp)
                             .size(100.dp, 300.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
@@ -128,7 +128,7 @@ fun BikeScreen(
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
                         .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp), // 요소 간의 16dp 간격 설정,
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 

@@ -18,7 +18,9 @@ class BikeViewModel : ViewModel() {
 
     init {
         startSpeedUpdate()
+        startBatteryUpdate()
     }
+
 
     private fun startSpeedUpdate() {
         viewModelScope.launch {
@@ -42,54 +44,77 @@ class BikeViewModel : ViewModel() {
         Timber.d("속도가 업데이트되었습니다: $newSpeed")
     }
 
+    private fun startBatteryUpdate() {
+        viewModelScope.launch {
+            while (true) {
+                updateBattery()
+                delay(1000) // 1초 대기
+            }
+        }
+    }
+
+    private fun updateBattery() {
+        val currentState = uiState.value
+        val newBattery = Util.calculateBattery(
+            currentState.battery,
+            currentState.targetBattery,
+        )
+        _uiState.update {
+            it.copy(battery = newBattery)
+        }
+        Timber.d("속도가 업데이트되었습니다: $newBattery")
+    }
+
+
+//    fun changeGear(gear: Int) {
+//        viewModelScope.launch {
+//            _uiState.update {
+//                it.copy(
+//                    gear = gear
+//                )
+//            }
+//            //여긴 잘 바뀜
+//            Timber.d("기어값이 바뀌었습니다. : $gear   ${uiState.value.gear}")
+//        }
+//    }
+
+    fun changeProportionalFactor(proportionalFactor: Float) {
+        viewModelScope.launch {
+//            val afterSpeed =
+//                Util.calculateSpeed(uiState.value.speed, uiState.value.gear, proportionalFactor)
+
+            _uiState.update {
+                it.copy(
+//                    speed = afterSpeed,
+                    proportionalFactor = proportionalFactor
+                )
+            }
+//            Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
+        }
+    }
 
     fun changeGear(gear: Int) {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    gear = gear
-                )
-            }
-            //여긴 잘 바뀜
-            Timber.d("기어값이 바뀌었습니다. : $gear   ${uiState.value.gear}")
-        }
-    }
-
-    fun changeSpeed(proportionalFactor: Float) {
-        viewModelScope.launch {
-            val afterSpeed =
-                Util.calculateSpeed(uiState.value.speed, uiState.value.gear, proportionalFactor)
+//            val afterSpeed =
+//                Util.calculateSpeed(uiState.value.speed, gear, uiState.value.proportionalFactor)
 
             _uiState.update {
                 it.copy(
-                    speed = afterSpeed,
+                    gear = gear,
                 )
             }
-            Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
+            Timber.d("속도값이 바뀌었습니다. : $gear   ${uiState.value.gear}")
         }
     }
 
-    fun changeSpeed(gear: Int) {
+    fun changeTargetBattery(targetBattery: Float) {
         viewModelScope.launch {
-            val afterSpeed =
-                Util.calculateSpeed(uiState.value.speed, gear, uiState.value.proportionalFactor)
-
-            _uiState.update {
-                it.copy(
-                    speed = afterSpeed,
-                )
-            }
-            Timber.d("속도값이 바뀌었습니다. : $afterSpeed   ${uiState.value.gear}")
-        }
-    }
-
-    fun changeTargetBattery(battery: Float) {
-        viewModelScope.launch {
-            val afterBattery = Util.calculateBattery(uiState.value.battery, battery)
+            val afterBattery = Util.calculateBattery(uiState.value.battery, targetBattery)
 
             _uiState.update {
                 it.copy(
                     battery = afterBattery,
+                    targetBattery = targetBattery
                 )
             }
         }

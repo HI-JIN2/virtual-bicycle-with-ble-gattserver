@@ -111,7 +111,7 @@ class GattServerManager(
             val newGear = resultArray?.get(0)?.toByte() ?: 1
 
             bikeViewModel.changeGear(newGear.toInt())
-            bikeViewModel.changeSpeed(gear = newGear.toInt()) //Todo 여기서 호출하는 것이 맞나?
+//            bikeViewModel.changeSpeed(gear = newGear.toInt()) //Todo 여기서 호출하는 것이 맞나?
             Timber.i("Gear value changed to: $newGear")
 
             if (responseNeeded) {
