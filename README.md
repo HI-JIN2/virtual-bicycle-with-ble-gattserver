@@ -48,7 +48,7 @@ com.eddy.nrf
 
 - View와 ViewModel의 구조로 관심사 분리를 합니다.
 - UI -> **event** -> ViewModel
-- ViewModel -> uiState -> UI
+- ViewModel -> **uiState** -> UI
 
 <img width="507" alt="image" src="https://github.com/user-attachments/assets/1efb3af7-4310-4f0f-85ac-466fcfc98218">
 
