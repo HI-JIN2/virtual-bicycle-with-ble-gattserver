@@ -1,7 +1,5 @@
 package com.eddy.nrf.presentation.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eddy.nrf.R
 import com.eddy.nrf.presentation.ui.component.AnimatedImage
 import com.eddy.nrf.presentation.ui.component.Pas
@@ -38,22 +35,21 @@ import com.eddy.nrf.presentation.ui.component.Speed
 import com.eddy.nrf.presentation.ui.component.VerticalSlider
 import com.eddy.nrf.presentation.ui.theme.NRFTheme
 import com.eddy.nrf.presentation.ui.theme.Primary
+import com.eddy.nrf.presentation.ui.theme.Typography
 import kotlinx.coroutines.delay
 import java.time.LocalTime
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BikeScreen(
     bikeViewModel: BikeViewModel = BikeViewModel()
 ) {
 
-    val bikeUiState by bikeViewModel.uiState.collectAsState() //이걸로해야 값을 계속 관찰할 수 있음~
+    val bikeUiState by bikeViewModel.uiState.collectAsStateWithLifecycle() //이걸로해야 값을 계속 관찰할 수 있음~
 
     var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
-    var currentValue by remember { mutableFloatStateOf(0f) }
-    var proportionalFactor by remember { mutableStateOf(0f) }
-    var targetBatteryValue by remember { mutableStateOf(0f) }
+    var proportionalFactorSliderValue by remember { mutableStateOf(1f) }
+    var targetBatterySliderValue by remember { mutableStateOf(100f) }
 
     Column(
         modifier = Modifier.fillMaxSize() // 화면 전체 크기를 채움
@@ -89,15 +85,18 @@ fun BikeScreen(
 //                    Text("거리"+bikeUiState.distance.toString())
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 5.dp),
-                            value = proportionalFactor,
+                            value = proportionalFactorSliderValue,
                             onValueChange = {
-                                proportionalFactor = it
+                                proportionalFactorSliderValue = it
                                 bikeViewModel.changeSpeed(it)
                             },
                             valueRange = 0f..1.5f,
-                            steps = 2,
+//                            steps = 2, //간격 없음!
                         )
-                        Text(text = "비례값\n$proportionalFactor")
+                        Text(
+                            text = "비례값\n$proportionalFactorSliderValue",
+                            style = Typography.bodySmall
+                        )
                     }
                     //배터리 조정
                     Column(
@@ -112,15 +111,17 @@ fun BikeScreen(
 
                         VerticalSlider(
                             modifier = Modifier.size(20.dp, 10.dp),
-                            value = targetBatteryValue,
+                            value = targetBatterySliderValue,
                             onValueChange = {
-                                targetBatteryValue = it
+                                targetBatterySliderValue = it
                                 bikeViewModel.changeTargetBattery(it)
                             },
                             valueRange = 0f..100.0F,
-                            steps = 10,
                         )
-                        Text(text = "배터리 목표값\n$targetBatteryValue")
+                        Text(
+                            text = "배터리 목표값\n$targetBatterySliderValue",
+                            style = Typography.bodySmall
+                        )
                     }
                 }
                 Column(
@@ -136,7 +137,10 @@ fun BikeScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
                     ) {
-                        Text(text = bikeUiState.battery.toString() + "%", color = Color.White)
+                        Text(
+                            text = bikeUiState.battery.toString() + "%", color = Color.White,
+                            style = Typography.bodyMedium
+                        )
                         Image(
                             painter = painterResource(id = R.drawable.img_battery),  // 리소스 이미지 사용
                             contentDescription = "Example Image",
@@ -153,21 +157,22 @@ fun BikeScreen(
                         speed = bikeUiState.speed
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically // 세로 방향으로 중앙 정렬
-                    ) {
+                    Text(
+                        text = "ODO " + bikeUiState.distance.toString() + "km", color = Color.White,
+                        style = Typography.bodyMedium
+                    )
 
-                        Pas( //todo 글씨 색 수정
-                            modifier = Modifier.padding(end = 10.dp),
-                            select = bikeUiState.gear,
+                    Pas( //todo 글씨 색 수정
+                        modifier = Modifier.padding(end = 10.dp),
+                        select = bikeUiState.gear,
 //                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
-                            onSelect = { newIndex ->
+                        onSelect = { newIndex ->
 //                        selected = newIndex
-                                bikeViewModel.changeGear(newIndex)
-                            },
-                            viewModel = bikeViewModel
-                        )
-                    }
+                            bikeViewModel.changeGear(newIndex)
+                        },
+                        viewModel = bikeViewModel
+                    )
+
                 }
 
 
@@ -199,7 +204,6 @@ fun BikeScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun realTimeClock(): String {
     var currentTime by remember { mutableStateOf(LocalTime.now()) } // 현재 시간 상태
@@ -218,7 +222,6 @@ fun realTimeClock(): String {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     showBackground = true,
     name = "Galaxy Tab A9+",
