@@ -223,9 +223,9 @@ fun BikeScreen(
                         )
                     }
 
-                    Pas( //todo 글씨 색 수정
+                    Pas(
                         modifier = Modifier.padding(end = 10.dp),
-                        select = bikeUiState.gear,
+                        selectedValue = bikeUiState.gear,
 //                    selected.toFloat(), //사용자로 하여금 바꾸고 싶은 값은 uistate로 하면 안됨
                         onSelect = { newIndex ->
 //                        selected = newIndex

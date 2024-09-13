@@ -28,7 +28,7 @@ import timber.log.Timber
 @Composable
 fun Pas(
     modifier: Modifier = Modifier,
-    select: Int = 3,
+    selectedValue: Int = 3,
     onSelect: (Int) -> Unit = {},// 선택 콜백,
     viewModel: BikeViewModel = BikeViewModel()
 ) {
@@ -37,7 +37,7 @@ fun Pas(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "PAS  $select",
+            "PAS  $selectedValue",
             modifier = Modifier
                 .padding(5.dp), color = Color.White  // 왼쪽 정렬
             , style = Typography.bodyMedium
@@ -49,7 +49,7 @@ fun Pas(
             val color = getColorByPas(pas)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (pas == select) {
+                if (pas == selectedValue) {
                     Box(
                         modifier = Modifier
                             .size(width = 40.dp, height = 60.dp)
@@ -71,7 +71,7 @@ fun Pas(
                             .padding(8.dp)
                             .background(Color.Gray)
                             .clickable {
-//                                onSelect(index)
+                                onSelect(pas)
                                 Log.d("TAG", "Pas:selected $index")
                             } // 클릭 이벤트로 선택 변경
                     )
