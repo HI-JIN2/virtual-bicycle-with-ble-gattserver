@@ -28,7 +28,7 @@ class GattServerManager(
     @SuppressLint("MissingPermission")
     fun startServer() {
         bluetoothGattServer = bluetoothManager.openGattServer(context, gattServerCallback)
-        bluetoothGattServer?.addService(BluetoothServiceBuilder.createHeartRateService())
+        bluetoothGattServer?.addService(BluetoothGattServiceBuilder.createHeartRateService())
             ?: Timber.w("Unable to create GATT server")
     }
 

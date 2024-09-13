@@ -1,14 +1,17 @@
 package com.eddy.nrf.bluetooth
 
+import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.Intent
+import android.os.IBinder
 import com.eddy.nrf.presentation.ui.BikeViewModel
 
 class BluetoothService(
     context: Context,
     bikeViewModel: BikeViewModel,
-) {
+) : Service() {
     private val bluetoothManager: BluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val bluetoothAdapter: BluetoothAdapter = bluetoothManager.adapter
@@ -61,5 +64,9 @@ class BluetoothService(
 
     private fun checkBluetoothSupport(bluetoothAdapter: BluetoothAdapter?): Boolean {
         return bluetoothAdapter != null
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 }
