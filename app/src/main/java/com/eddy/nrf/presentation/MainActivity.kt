@@ -12,7 +12,6 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import com.eddy.nrf.bluetooth.BluetoothService
 import com.eddy.nrf.presentation.ui.BikeScreen
 import com.eddy.nrf.presentation.ui.BikeViewModel
@@ -22,10 +21,8 @@ class MainActivity : ComponentActivity() {
 
     private val bikeViewModel: BikeViewModel by viewModels()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private lateinit var bluetoothService: BluetoothService
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -45,15 +42,13 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStop() {
         super.onStop()
 
-        //이거 빼먹으면 안됨
-        bluetoothService.cleanup()
+        //onStop 상태에서 블루투스를 종료하면 안됨
+//        bluetoothService.cleanup()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onDestroy() { //Todo onDestroy 전에 무조건 onStop을 거침 그러면 여기서는 클린업을 안해줘도 되는것 아닌가?
         //재미있는 사실은 우선순위가 더 높은 앱이 메모리가 필요하다면 앱은 언제든지 종료될 수 있다.
         // 그렇게 때문에 onStop, onDestroy 메서드는 반드시 실행된다는 보장이 없다.

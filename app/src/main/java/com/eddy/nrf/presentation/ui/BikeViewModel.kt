@@ -77,7 +77,7 @@ class BikeViewModel : ViewModel() {
 
     private fun updateDistance() {
         val currentState = uiState.value
-        val odo = Util.calculateBattery(
+        val odo = Util.calculateOdo(
             currentState.distance,
             currentState.speed,
         )
