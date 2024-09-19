@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothGattService
 import com.eddy.nrf.utils.Uuid
 import java.util.UUID
 
-class BluetoothServiceBuilder(uuid: UUID, serviceType: Int) {
+class BluetoothGattServiceBuilder(uuid: UUID, serviceType: Int) {
     //블루투스 생성 과정을 빌더로 만든 클래스
 
     private val service: BluetoothGattService = BluetoothGattService(uuid, serviceType)
@@ -33,12 +33,12 @@ class BluetoothServiceBuilder(uuid: UUID, serviceType: Int) {
             return this
         }
 
-        fun and(): BluetoothServiceBuilder = this@BluetoothServiceBuilder
+        fun and(): BluetoothGattServiceBuilder = this@BluetoothGattServiceBuilder
     }
 
     companion object {
         fun createHeartRateService(): BluetoothGattService {
-            return BluetoothServiceBuilder(
+            return BluetoothGattServiceBuilder(
                 Uuid.HEART_RATE_SERVICE,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY
             )
