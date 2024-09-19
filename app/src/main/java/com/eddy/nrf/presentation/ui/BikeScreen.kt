@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,7 +53,6 @@ fun BikeScreen(
 
     val bikeUiState by bikeViewModel.uiState.collectAsStateWithLifecycle() //이걸로해야 값을 계속 관찰할 수 있음~
 
-    var selected by remember { mutableIntStateOf(0) } // 선택된 항목을 저장
     var proportionalFactorSliderValue by remember { mutableStateOf(1f) }
     var targetBatterySliderValue by remember { mutableStateOf(100f) }
 
@@ -75,7 +73,7 @@ fun BikeScreen(
                 AnimatedImage(
                     modifier = Modifier
                         .weight(1f),
-                    speed = 1f //Todo 기본 속도로 되어있음
+                    speed = bikeUiState.speed //Todo 기본 속도로 되어있음
                 )
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
