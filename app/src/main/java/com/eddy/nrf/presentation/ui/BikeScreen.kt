@@ -73,7 +73,7 @@ fun BikeScreen(
                 AnimatedImage(
                     modifier = Modifier
                         .weight(1f),
-                    speed = bikeUiState.speed //Todo 기본 속도로 되어있음
+                    speed = bikeUiState.speed
                 )
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())// 화면 전체 크기를 채움
@@ -82,7 +82,7 @@ fun BikeScreen(
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 330.dp),
+                            .size(100.dp, 320.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -130,7 +130,7 @@ fun BikeScreen(
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 350.dp),
+                            .size(100.dp, 320.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
