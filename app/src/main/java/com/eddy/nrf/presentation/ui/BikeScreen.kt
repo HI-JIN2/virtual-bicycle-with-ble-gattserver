@@ -82,7 +82,7 @@ fun BikeScreen(
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 330.dp),
+                            .size(100.dp, 320.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -130,7 +130,7 @@ fun BikeScreen(
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
-                            .size(100.dp, 350.dp),
+                            .size(100.dp, 320.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
 
