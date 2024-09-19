@@ -57,7 +57,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.activity.ktx)
-//    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -79,8 +78,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-//    implementation(libs.navigation)
-//    implementation(libs.hilt.navigation.compose)
 
     implementation(libs.viewmodel.compose)
     implementation(libs.timber)
