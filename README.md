@@ -36,9 +36,9 @@ com.eddy.nrf
 └──── utils
 ```
 
-## Tech issue
+## Trouble Shooting
 
-### Bluetooth 관심사 분리
+### 1. Bluetooth 관심사 분리
 > 블루투스 서비스가 거대해지는 것을 막기 위해서 단일 책임원칙에 따른 관심사 분리를 했습니다.
 
 0. BluetoothService:
@@ -66,9 +66,10 @@ register(), unregister() 메서드를 포함하여 리시버를 등록/해제합
 블루투스 생성 과정을 빌더로 만든 클래스입니다.  
 Bluetooth service, characteristic 등의 정보를 받아서 서비스를 생성합니다. 
 
-### Foreground service
-> 기기를 잠금하고 다시 돌아온 상태나 포커싱이 없는 상태에서도 subscriber에게 ble notification이 가도록 하기 위해서   
-> BluetoothService가 `Service`를 상속받도록 수정.
+### 2. Foreground service
+🍀 **요구사항: 기기를 잠금하고 다시 돌아온 상태나 포커싱이 없는 상태에서도 subscriber에게 ble notification이 가도록 하라.**
+> BluetoothService가 안드로이드 4대 컴포넌트인 `Service`를 상속받도록 수정하였습니다.  
+> 포그라운드 서비스로 지정함으로써 사용자가 앱과 사용작용하지 않을 때도 계속 실행됩니다.
 - Service는 `startForeground`를 통해 Foreground 서비스 시작
 ```
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -78,12 +79,78 @@ Bluetooth service, characteristic 등의 정보를 받아서 서비스를 생성
         return START_STICKY // 서비스가 중단되었을 경우 자동으로 다시 시작
     }
 ```
+### 3. 동적으로 애니메이션 속도 조정
+🍀 **요구사항: uiState의 Speed가 변경됨에 따라 자전거 애니메이션의 속도가 바뀌도록 하여라.**
+- 초안
+   - rememberInfiniteTransition으로는 동적으로 속도를 조정할 수 없다.
+   - durationMillis 파라미터는 동적으로 값의 변화를 인지하지 못하는 문제 발생.
+```kotlin
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val currentFrame by infiniteTransition.animateValue(
+        initialValue = 0,
+        targetValue = frameCount - 1,
+        typeConverter = Int.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = (frameCount * baseDuration / speed).toInt(),
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = ""
+    )
+```
+
+- 해결 버전
+  - speed는 항상 관찰이 되지만, 현재 프레임의 frameDuration
+  - LaunchedEffect는 Compose에서 사이드 이펙트를 실행하기 위해 사용됩니다. 특정 키(speed)가 변경될 때마다 새로운 코루틴을 시작합니다. speed 값이 변경될 때마다 애니메이션 루프를 다시 시작하려고 시도합니다.
+  - currentFrame.value를 1씩 증가시키며, frameCount로 나눈 나머지를 취하여 루프를 만듭니다.
+  - 각 프레임이 표시되는 시간을 frameDuration만큼 지연시킵니다.
+
+
+```kotlin
+    // speed에 따른 frameDuration 계산
+
+    val frameDuration = if (speed > 0) {
+        (baseDuration * 3 / (speed / 3).coerceIn(1f, 9f)).toLong()
+    } else {
+        Long.MAX_VALUE // 매우 큰 값으로 설정하여 애니메이션 정지
+    }
+
+    // 현재 프레임 상태
+    val currentFrame = remember { mutableStateOf(0) }
+
+    // 애니메이션 업데이트를 위한 LaunchedEffect
+    LaunchedEffect(speed) { // speed를 키로 사용
+        while (speed > 0) { // speed가 0이 아닌 동안만 루프 실행
+            // 프레임 업데이트
+            currentFrame.value = (currentFrame.value + 1) % frameCount
+            // 속도에 따른 프레임 지속시간 조정
+            delay(frameDuration)
+
+            Log.d("laun", "${currentFrame.value} $speed $frameDuration")
+        }
+    }
+
+    // 애니메이션을 정지시키는 빈 이미지 또는 투명 이미지 설정
+    val displayImage = if (speed > 0) {
+        images[currentFrame.value]
+    } else {
+        painterResource(id = R.drawable.out_001)
+    }
+
+    Image(
+        painter = displayImage,
+        contentDescription = null,
+        modifier = modifier
+    )
+```
 
 ## Library
 | 이름 | 목적| 
 |---|---|
 | Bluetooth | Bluetooth Low Energy(BLE) 통신을 관리. [BLE 광고](https://developer.android.com/reference/android/bluetooth/le/BluetoothLeAdvertiser) 및 [GATT 서버](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer) 관리에 사용
-|Jetpack Compose | 선언적 UI 빌드 및 UI 상태 관리를 위한 라이브러리 |
+| Jetpack Compose | 선언적 UI 빌드 및 UI 상태 관리를 위한 라이브러리 |
 | Timber | 로그 관리를 위한 라이브러리. 더 간결하고 유연한 로깅을 제공 |
 
 ## Architecture
