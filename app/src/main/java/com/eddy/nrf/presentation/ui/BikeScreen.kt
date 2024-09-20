@@ -108,7 +108,7 @@ fun BikeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "비례값",
+                                text = "Power",
                                 color = Color.White,
                                 style = Typography.displaySmall,
                                 textAlign = TextAlign.Center
@@ -154,7 +154,7 @@ fun BikeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "배터리\n목표값",
+                                text = "Battery",
                                 style = Typography.displaySmall,
                                 color = Color.White,
                                 textAlign = TextAlign.Center

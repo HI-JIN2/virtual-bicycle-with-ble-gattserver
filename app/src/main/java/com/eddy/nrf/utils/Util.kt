@@ -35,7 +35,7 @@ object Util {
     fun calculateSpeed(currentSpeed: Float, targetGear: Int, proportionalFactor: Float): Float {
         ///현재 속도 s, 목표속도 t, 비례값
         val targetSpeed = targetGear * 10.0 // 1단 -> 10km/h, 2단 -> 20km/h, 3단 -> 30km/h
-        return (currentSpeed + ((targetSpeed * proportionalFactor) - currentSpeed) * 0.01).toFloat()
+        return (currentSpeed + ((targetSpeed * proportionalFactor) - currentSpeed) * 0.1).toFloat()
     }
 
     fun calculateBattery(currentBattery: Float, targetBattery: Float): Float {

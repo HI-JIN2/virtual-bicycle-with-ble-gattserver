@@ -37,7 +37,7 @@ fun AnimatedImage(
     // speed에 따른 frameDuration 계산
 
     val frameDuration = if (speed > 0) {
-        (baseDuration * 3 / (speed / 3).coerceIn(1f, 9f)).toLong()
+        (baseDuration * 3 / (speed)).toLong()
     } else {
         Long.MAX_VALUE // 매우 큰 값으로 설정하여 애니메이션 정지
     }
