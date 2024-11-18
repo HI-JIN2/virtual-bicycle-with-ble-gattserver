@@ -1,16 +1,16 @@
 # BLE Virtual Bicycle (9.2~9.20 온보딩 프로젝트)
 
-
+> BLE(Bluetooth Low Energy)를 사용해서 스마트폰을 이용한 가상 자전거 만들기 toy project
+- 스마트폰을 Bluetooth Server로 만들어 센서의 역할을 하게 한다.
 
 https://github.com/user-attachments/assets/65abf589-f4b0-445d-a499-92f902e39b25
 
 
-> BLE(Bluetooth Low Energy)를 사용해서 스마트폰을 이용한 가상 자전거 만들기 toy project
-- 스마트폰을 Bluetooth Server로 만들어 센서의 역할을 하게 한다.
-![Frame 5](https://github.com/user-attachments/assets/d80b16a4-7146-49cf-aa63-deb86b392aca)
+
+
 
 ## Device
-
+![Frame 5](https://github.com/user-attachments/assets/d80b16a4-7146-49cf-aa63-deb86b392aca)
 - 안드로이드 스마트폰 기기 2개가 필요하다.
 - 앱을 설치한 기기가 센서의 역할을 하며 정보를 생성하고 전달하는 `server`가 된다.
 - 앱을 설치하지 않은 기기는 `Server`로 부터 정보를 받아오는 `client` 기기가 된다.
